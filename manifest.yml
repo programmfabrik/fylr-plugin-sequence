@@ -1,0 +1,75 @@
+plugin:
+  name: fylr-sequence-plugin
+  version: 1
+  displayname:
+    de-DE: "Sequence Plugin"
+    en-US: "Sequence Plugin"
+  webfrontend:
+    url: fylr-sequence-plugin.js
+    l10n: l10n/
+
+
+# callback registration in fylr
+callbacks:
+  db_pre_save:
+    steps:
+      - name: "automatic filling of emtpy fields with sequential numbers"
+        callback: insert_sequence
+    callbacks:
+      insert_sequence:
+        exec:
+          service: python3
+          commands:
+            - prog: python3
+              stdin:
+                type: body
+              stderr:
+                type: body
+              stdout:
+                type: body
+              args:
+                - type: value
+                  value: "%_exec.pluginDir%/src/server/insert_sequence.py"
+
+base_config:
+
+  - name: fylr-sequence-plugin.insert_sequence.sequence
+    parameters:
+      objecttype:
+        type: text
+        plugin_type: sequence_objecttype
+        position: 0
+      ref_field:
+        type: text
+        plugin_type: sequence_ref_field
+        position: 1
+      num_field:
+        type: text
+        plugin_type: sequence_num_field
+        position: 2
+
+  - name: fylr-sequence-plugin.insert_sequence.objecttypes
+    parameters:
+      objecttype_settings:
+        type: table
+        fields:
+          - name: update_objecttype
+            type: text
+            plugin_type: update_objecttype
+            position: 0
+          - name: update_column
+            type: text
+            plugin_type: update_column
+            position: 1
+          - name: template
+            type: text
+            regex: "^.*%(?:[0#-+ ][1-9]+){0,1}[dioxXeEfFgGc]{0,1}.*$"
+            position: 2
+          - name: start_offset
+            default: 0
+            type: int
+            position: 3
+          - name: only_insert
+            type: bool
+            position: 4
+        position: 0

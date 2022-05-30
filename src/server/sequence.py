@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from . import util
+import fylr_lib_plugin_python3.util as util
 import json
 
 
@@ -29,6 +29,9 @@ class FylrSequence(object):
             sequence_num_field = sequence_num_field[len(
                 sequence_objecttype) + 1:]
         self.sequence_num_field = sequence_num_field
+
+    def __str__(self) -> str:
+        return '%s: %d'.format(self.ref, self.current_number)
 
     @util.handle_exceptions
     def get_from_api(self, path):
@@ -81,7 +84,7 @@ class FylrSequence(object):
 
         if new_number <= self.current_number:
             return False, {
-                'current_numer': self.current_number,
+                'current_number': self.current_number,
                 'new_number': new_number,
             }
 

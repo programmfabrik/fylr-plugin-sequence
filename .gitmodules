@@ -1,3 +1,6 @@
-[submodule "fylr_lib_plugin_python3"]
-	path = fylr_lib_plugin_python3
+[submodule "easydb-library"]
+	path = easydb-library
+	url = git@github.com:programmfabrik/easydb-library.git
+[submodule "src/server/fylr_lib_plugin_python3"]
+	path = src/server/fylr_lib_plugin_python3
 	url = git@github.com:programmfabrik/fylr-lib-plugin-python3.git

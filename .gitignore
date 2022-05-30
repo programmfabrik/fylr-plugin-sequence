@@ -1,0 +1,9 @@
+build
+build-stamp-l10n
+
+.vscode/
+
+*.js
+*.txt
+
+build-info.json
