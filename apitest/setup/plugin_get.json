@@ -1,0 +1,13 @@
+{
+    "name": "GET /api/plugin/manage",
+    "request": {
+        "endpoint": "plugin/manage",
+        "method": "GET"
+    },
+    "response": {
+        "statuscode": 200
+    },
+    "store_response_qjson": {
+        "plugins": "body.plugins"
+    }
+}

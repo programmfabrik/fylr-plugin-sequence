@@ -1,0 +1,12 @@
+[
+    {
+        "name": "purge 6...",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "settings/purgeall",
+            "method": "POST"
+        }
+    }
+]

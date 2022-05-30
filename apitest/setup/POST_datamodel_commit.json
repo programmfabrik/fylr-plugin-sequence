@@ -1,0 +1,17 @@
+[
+    "@POST_datamodel.json"
+    ,{
+        "name": "commit schema",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "schema/commit",
+            "query_params": {
+                "confirm": "yes"
+            },
+            "method": "POST"
+        }
+    }
+    ,"@reindex.json"
+]

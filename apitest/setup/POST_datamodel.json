@@ -1,0 +1,35 @@
+[
+    {
+        "name": "upload schema",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "schema/user/HEAD",
+            "method": "POST",
+            "body": {{  datastore "setup_datamodel" | qjson "schema" }}
+        }
+    }
+    ,{
+        "name": "upload mask",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "mask/HEAD",
+            "method": "POST",
+            "body": {{ datastore "setup_datamodel" | qjson "mask" }}
+        }
+    }
+    ,{
+        "name": "upload keys",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "l10n/user/HEAD",
+            "method": "POST",
+            "body": {{ datastore "setup_datamodel" | qjson "keys" }}
+        }
+    }
+]

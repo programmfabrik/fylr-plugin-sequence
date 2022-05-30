@@ -1,0 +1,30 @@
+{
+    "plugin": {
+        "fylr-sequence-plugin": {
+            "config": {
+                "fylr-sequence-plugin.insert_sequence.objecttypes": {
+                    "objecttype_settings": [
+                        {
+                            "update_objecttype": "cs_image",
+                            "update_column": "cs_image.name",
+                            "template": "HU%06d",
+                            "only_insert": true
+                        },
+                        {
+                            "update_objecttype": "cs_image",
+                            "update_column": "cs_image.todo",
+                            "template": "#%08X",
+                            "start_offset": 3000,
+                            "only_insert": false
+                        }
+                    ]
+                },
+                "fylr-sequence-plugin.insert_sequence.sequence": {
+                    "objecttype": "sequence",
+                    "ref_field": "sequence.reference",
+                    "num_field": "sequence.number"
+                }
+            }
+        }
+    }
+}

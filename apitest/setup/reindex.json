@@ -1,0 +1,42 @@
+[
+    {
+        "name": "reindex (blockFrontend=1)...",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "settings/reindex",
+            "query_params": {
+                "blockFrontend": "1"
+            },
+            "method": "POST"
+        },
+        // a reindex removes all OBJECT_INDEX events from the database, so we cannot
+        // poll for global_object_ids which are still in the datastore. The ids need
+        // to be removed from the array.
+        "store":{
+            "global_object_ids": null
+        }
+    },
+    {
+        "name": "Wait for index"
+        ,"request": {
+            "endpoint": "settings/status",
+            "method": "GET",
+            "header_from_store": {
+                "Authorization": "root-token"
+            }
+        }
+        ,"collect_response": [
+            {
+                "body": {
+                    "total_not_indexed": 0
+                }
+            }
+        ]
+        ,"timeout_ms": 120000
+        ,"delay_ms": 1000
+    }
+]
+
+

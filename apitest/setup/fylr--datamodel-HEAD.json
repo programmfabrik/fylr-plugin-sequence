@@ -1,0 +1,402 @@
+{
+    "schema": {
+        "version": 1,
+        "based_on_base_version": 1,
+        "max_table_id": 248,
+        "max_column_id": 1084,
+        "tables": [
+            {
+                "name": "cs_image",
+                "table_id": 2,
+                "pool_link": false,
+                "acl_table": false,
+                "has_tags": false,
+                "is_hierarchical": false,
+                "polyhierarchical": false,
+                "in_main_search": true,
+                "comment": "",
+                "columns": [
+                    {
+                        "kind": "column",
+                        "name": "easydb4_reference",
+                        "type": "string",
+                        "not_null": false,
+                        "column_id": 9,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "description",
+                        "type": "text",
+                        "not_null": false,
+                        "column_id": 10,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "easfile_id",
+                        "type": "eas",
+                        "not_null": false,
+                        "column_id": 11,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "name",
+                        "type": "text_oneline",
+                        "not_null": true,
+                        "column_id": 21,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "todo",
+                        "type": "text",
+                        "not_null": false,
+                        "column_id": 24,
+                        "custom_settings": {},
+                        "name_localized": null
+                    }
+                ],
+                "foreign_keys": [],
+                "unique_keys": [
+                    {
+                        "columns": [
+                            {
+                                "column_id": 21,
+                                "column_name_hint": "name"
+                            }
+                        ]
+                    }
+                ],
+                "bidirectional": []
+            },
+            {
+                "name": "sequence",
+                "table_id": 248,
+                "pool_link": false,
+                "acl_table": false,
+                "has_tags": false,
+                "is_hierarchical": false,
+                "polyhierarchical": false,
+                "in_main_search": false,
+                "comment": "",
+                "columns": [
+                    {
+                        "kind": "column",
+                        "name": "number",
+                        "type": "number",
+                        "not_null": true,
+                        "column_id": 1083,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "reference",
+                        "type": "text_oneline",
+                        "not_null": true,
+                        "column_id": 1084,
+                        "custom_settings": {},
+                        "name_localized": null
+                    }
+                ],
+                "foreign_keys": [],
+                "unique_keys": [
+                    {
+                        "columns": [
+                            {
+                                "column_id": 1084,
+                                "column_name_hint": "reference"
+                            }
+                        ]
+                    }
+                ],
+                "bidirectional": []
+            }
+        ],
+        "type": "user"
+    },
+    "mask": {
+        "type": "user",
+        "version": 1,
+        "based_on_schema_version": 1,
+        "max_mask_id": 72,
+        "masks": [
+            {
+                "name": "cs_image__all_fields",
+                "mask_id": 5,
+                "table_id": 2,
+                "table_name_hint": "cs_image",
+                "is_preferred": true,
+                "hide_in_detail": false,
+                "hide_in_editor": false,
+                "hide_in_print_dialog": false,
+                "standard_numbering": "",
+                "require_comment": "never",
+                "comment": "",
+                "system_fields": {
+                    "object_id": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "tags": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "owner": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "collections": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "publish": {
+                        "output": {
+                            "mode": "off"
+                        }
+                    }
+                },
+                "fields": [
+                    {
+                        "kind": "field",
+                        "column_id": 21,
+                        "column_name_hint": "name",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {
+                                "format": "comma",
+                                "order": 1
+                            },
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 10,
+                        "column_name_hint": "description",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {},
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 24,
+                        "column_name_hint": "todo",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {},
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 11,
+                        "column_name_hint": "easfile_id",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {},
+                            "standard_eas": {
+                                "order": 1
+                            }
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {
+                            "show_in_map": true
+                        }
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 9,
+                        "column_name_hint": "easydb4_reference",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {},
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    }
+                ]
+            },
+            {
+                "name": "sequence__all_fields",
+                "mask_id": 72,
+                "table_id": 248,
+                "table_name_hint": "sequence",
+                "is_preferred": true,
+                "hide_in_detail": false,
+                "hide_in_editor": false,
+                "hide_in_print_dialog": false,
+                "standard_numbering": "",
+                "require_comment": "never",
+                "comment": "",
+                "system_fields": {
+                    "object_id": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "tags": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "owner": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "publish": {
+                        "output": {
+                            "mode": "off"
+                        }
+                    }
+                },
+                "fields": [
+                    {
+                        "kind": "field",
+                        "column_id": 1083,
+                        "column_name_hint": "number",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {
+                                "format": "comma",
+                                "order": 2
+                            },
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 1084,
+                        "column_name_hint": "reference",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {
+                                "format": "comma",
+                                "order": 1
+                            },
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    }
+                ]
+            }
+        ]
+    },
+    "keys": {},
+    "version": 1,
+    "format_version": 1
+}

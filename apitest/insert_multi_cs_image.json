@@ -1,0 +1,48 @@
+[
+    {
+        "name": "POST /api/v1/db/cs_image",
+        "request": {
+            "body": [
+                {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+                    {{ if gt $idx 0 }}, {{ end }}
+                    {
+                        "_mask": "_all_fields",
+                        "_objecttype": "cs_image",
+                        "cs_image": {
+                            "_version": 1,
+                            "name": null
+                        }
+                    }
+                {{ end }}
+            ],
+            "endpoint": "db/cs_image",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "body:control": {
+                "order_matters": true
+            },
+            "body": [
+                {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+                    {{ if gt $idx 0 }}, {{ end }}
+                    {
+                        "cs_image": {
+                            "name:control": {
+                                "starts_with": "HU0",
+                                "ends_with": "0{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
+                            },
+                            "todo:control": {
+                                "starts_with": "TODO: #30",
+                                "ends_with": "{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
+                            }
+                        }
+                    }
+                {{ end }}
+            ],
+            "statuscode": 200
+        }
+    }
+]

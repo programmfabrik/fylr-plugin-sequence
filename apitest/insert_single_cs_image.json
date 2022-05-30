@@ -1,0 +1,41 @@
+[
+    {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+        {
+            "name": "POST /api/v1/db/cs_image",
+            "request": {
+                "body": [
+                    {
+                        "_mask": "_all_fields",
+                        "_objecttype": "cs_image",
+                        "cs_image": {
+                            "_version": 1,
+                            "name": null
+                        }
+                    }
+                ],
+                "endpoint": "db/cs_image",
+                "method": "POST",
+                "query_params": {
+                    "format": "long"
+                }
+            },
+            "response": {
+                "body": [
+                    {
+                        "cs_image": {
+                            "name:control": {
+                                "starts_with": "HU0",
+                                "ends_with": "0{{ add $idx 1 }}"
+                            },
+                            "todo:control": {
+                                "starts_with": "TODO: #30",
+                                "ends_with": "{{ add $idx 1 }}"
+                            }
+                        }
+                    }
+                ],
+                "statuscode": 200
+            }
+        },
+    {{ end }}
+]

@@ -1,0 +1,24 @@
+[
+    {
+        "name": "GET /api/settings",
+        "request": {
+            "header": {
+                "Authorization": ""
+            },
+            "endpoint": "settings",
+            "method": "GET"
+        },
+        "response": {
+            "statuscode": 200
+        },
+        "store_response_qjson": {
+            "settings.name": "body.name",
+            "settings.version": "body.version",
+            "settings.instance": "body.instance",
+            "settings.index_names": "body.index_names",
+            "settings.frontend_external_url": "body.frontend_external_url"
+        },
+        "delay_ms": 500,
+        "timeout_ms": 5000
+    }
+]

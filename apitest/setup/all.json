@@ -1,0 +1,11 @@
+[
+    "@get_settings.json"
+    ,"@root_session.json"
+    ,"@purge.json"
+    // get settings again, after purge we have a new db instance id
+    ,"@get_settings.json"
+    ,"@root_session.json"
+    ,"@post_config.json"
+    ,"@POST_datamodel_commit.json"
+    ,"@plugin_init.json"
+]
