@@ -15,22 +15,12 @@
             }
         }
 
-<<<<<<< HEAD
         // insert single cs_image objects
         // where the field name and description are empty, plugin must insert sequential number
         , "@insert_single_cs_image.json"
 
         // insert multiple cs_image objects in a single request
         // where the field name and description are empty, plugin must insert sequential number
-=======
-        // FIXME: these calls block in sqlite, but not in postgres
-        // the set_image_name plugin performs a call to the api, which is blocked in sqlite3 and causes a timeout after 30 seconds
-
-        // insert single cs_image objects where the field name is empty, plugin must insert sequential number
-        , "@insert_single_cs_image.json"
-
-        // insert multiple cs_image objects in a single request
->>>>>>> 700983035c311d393ec0d88e3f0e0c8676a3436e
         , "@insert_multi_cs_image.json"
 
         // update the cs_image objects to test the different update settings for fields:
