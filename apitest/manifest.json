@@ -1,6 +1,5 @@
 {
-    "name": "#64339 | db_pre_save which calls back into the API blocks on sqlite",
-    "description": "only works with https://github.com/programmfabrik/easydb-solution-census-plugin",
+    "name": "fylr-sequence-plugin",
     "header_from_store": {
         "Authorization": "root-token"
     },
@@ -10,20 +9,23 @@
     },
     "tests": [
         "@setup/all.json"
-
         , {
             "store": {
                 "n_single_objects": 3
             }
         }
 
-        // todo: these calls block in sqlite, but not in postgres
-        // the set_image_name plugin performs a call to the api, which is blocked in sqlite3 and causes a timeout after 30 seconds
-
-        // insert single cs_image objects where the field name is empty, plugin must insert sequential number
-        ,"@insert_single_cs_image.json"
+        // insert single cs_image objects
+        // where the field name and description are empty, plugin must insert sequential number
+        , "@insert_single_cs_image.json"
 
         // insert multiple cs_image objects in a single request
-        ,"@insert_multi_cs_image.json"
+        // where the field name and description are empty, plugin must insert sequential number
+        , "@insert_multi_cs_image.json"
+
+        // update the cs_image objects to test the different update settings for fields:
+        // cs_image.name must always be filled when the object is updated
+        // cs_image.description must only be filled when the object is created
+        , "@update_cs_image.json"
     ]
 } 

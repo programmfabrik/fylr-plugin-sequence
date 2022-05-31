@@ -34,8 +34,8 @@
                                 "starts_with": "HU0",
                                 "ends_with": "0{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
                             },
-                            "todo:control": {
-                                "starts_with": "TODO: #30",
+                            "description:control": {
+                                "starts_with": "DESC: #30",
                                 "ends_with": "{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
                             }
                         }
