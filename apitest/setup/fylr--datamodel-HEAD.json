@@ -2,8 +2,8 @@
     "schema": {
         "version": 1,
         "based_on_base_version": 1,
-        "max_table_id": 248,
-        "max_column_id": 1084,
+        "max_table_id": 249,
+        "max_column_id": 1086,
         "tables": [
             {
                 "name": "cs_image",
@@ -117,6 +117,49 @@
                     }
                 ],
                 "bidirectional": []
+            },
+            {
+                "name": "inventory",
+                "table_id": 249,
+                "pool_link": false,
+                "acl_table": false,
+                "has_tags": false,
+                "is_hierarchical": false,
+                "polyhierarchical": false,
+                "in_main_search": false,
+                "comment": "",
+                "columns": [
+                    {
+                        "kind": "column",
+                        "name": "inv_nr",
+                        "type": "string",
+                        "not_null": true,
+                        "column_id": 1085,
+                        "custom_settings": {},
+                        "name_localized": null
+                    },
+                    {
+                        "kind": "column",
+                        "name": "title",
+                        "type": "text_oneline",
+                        "not_null": false,
+                        "column_id": 1086,
+                        "custom_settings": {},
+                        "name_localized": null
+                    }
+                ],
+                "foreign_keys": [],
+                "unique_keys": [
+                    {
+                        "columns": [
+                            {
+                                "column_id": 1085,
+                                "column_name_hint": "inv_nr"
+                            }
+                        ]
+                    }
+                ],
+                "bidirectional": []
             }
         ],
         "type": "user"
@@ -125,7 +168,7 @@
         "type": "user",
         "version": 1,
         "based_on_schema_version": 1,
-        "max_mask_id": 72,
+        "max_mask_id": 73,
         "masks": [
             {
                 "name": "cs_image__all_fields",
@@ -229,7 +272,7 @@
                     {
                         "kind": "field",
                         "column_id": 24,
-                        "column_name_hint": "todo",
+                        "column_name_hint": "description",
                         "edit": {
                             "mode": "edit"
                         },
@@ -371,6 +414,102 @@
                         "kind": "field",
                         "column_id": 1084,
                         "column_name_hint": "reference",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {
+                                "format": "comma",
+                                "order": 1
+                            },
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    }
+                ]
+            },
+            {
+                "name": "inventory__all_fields",
+                "mask_id": 73,
+                "table_id": 249,
+                "table_name_hint": "inventory",
+                "is_preferred": true,
+                "hide_in_detail": false,
+                "hide_in_editor": false,
+                "hide_in_print_dialog": false,
+                "standard_numbering": "",
+                "require_comment": "never",
+                "comment": "",
+                "system_fields": {
+                    "object_id": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "tags": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "owner": {
+                        "output": {
+                            "mode": "off"
+                        },
+                        "edit": {
+                            "mode": "off"
+                        }
+                    },
+                    "publish": {
+                        "output": {
+                            "mode": "off"
+                        }
+                    }
+                },
+                "fields": [
+                    {
+                        "kind": "field",
+                        "column_id": 1085,
+                        "column_name_hint": "inv_nr",
+                        "edit": {
+                            "mode": "edit"
+                        },
+                        "output": {
+                            "detail": true,
+                            "text": true,
+                            "table": true,
+                            "standard": {
+                                "format": "colon",
+                                "order": 1
+                            },
+                            "standard_eas": {}
+                        },
+                        "search": {
+                            "expert": true,
+                            "fulltext": true,
+                            "facet": true,
+                            "nested": false
+                        },
+                        "custom_settings": {}
+                    },
+                    {
+                        "kind": "field",
+                        "column_id": 1086,
+                        "column_name_hint": "title",
                         "edit": {
                             "mode": "edit"
                         },

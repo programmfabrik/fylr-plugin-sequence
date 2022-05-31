@@ -8,21 +8,28 @@
                             "update_objecttype": "cs_image",
                             "update_column": "cs_image.name",
                             "template": "HU%06d",
-                            "only_insert": true
+                            "only_insert": false
                         },
                         {
                             "update_objecttype": "cs_image",
-                            "update_column": "cs_image.todo",
-                            "template": "#%08X",
+                            "update_column": "cs_image.description",
+                            "template": "DESC: #%04d",
                             "start_offset": 3000,
-                            "only_insert": false
+                            "only_insert": true
+                        },
+                        {
+                            "update_objecttype": "inventory",
+                            "update_column": "inventory.inv_nr",
+                            "template": "INV_%05d",
+                            "start_offset": 1000,
+                            "only_insert": true
                         }
                     ]
                 },
                 "fylr-sequence-plugin.insert_sequence.sequence": {
-                    "objecttype": "sequence",
-                    "ref_field": "sequence.reference",
-                    "num_field": "sequence.number"
+                    "sequence_objecttype": "sequence",
+                    "sequence_ref_field": "sequence.reference",
+                    "sequence_num_field": "sequence.number"
                 }
             }
         }

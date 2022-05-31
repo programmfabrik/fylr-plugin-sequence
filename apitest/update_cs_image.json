@@ -1,15 +1,17 @@
 [
     {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
         {
-            "name": "POST /api/v1/db/cs_image",
+            "name": "POST /api/v1/db/cs_image: update",
             "request": {
                 "body": [
                     {
                         "_mask": "_all_fields",
                         "_objecttype": "cs_image",
                         "cs_image": {
-                            "_version": 1,
-                            "name": null
+                            "_id": {{ $idx | printf "cs_image_id_%d" | datastore }},
+                            "_version": {{ add 1 ( $idx | printf "cs_image_version_%d" | datastore) }},
+                            "name": null,
+                            "description": null
                         }
                     }
                 ],
@@ -25,11 +27,10 @@
                         "cs_image": {
                             "name:control": {
                                 "starts_with": "HU0",
-                                "ends_with": "0{{ add $idx 1 }}"
+                                "ends_with": "{{ add ( add $idx 1 ) ( mul 2 (datastore "n_single_objects") ) }}"
                             },
                             "description:control": {
-                                "starts_with": "DESC: #30",
-                                "ends_with": "{{ add $idx 1 }}"
+                                 "must_not_exist": true
                             }
                         }
                     }
@@ -37,7 +38,6 @@
                 "statuscode": 200
             },
             "store_response_qjson": {
-                "cs_image_id_{{ $idx }}": "body.0.cs_image._id",
                 "cs_image_version_{{ $idx }}": "body.0.cs_image._version"
             }
         },
