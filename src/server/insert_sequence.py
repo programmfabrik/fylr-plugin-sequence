@@ -103,17 +103,17 @@ def main():
     config_path = main_config_path + 'sequence.'
 
     sequence_objecttype = util.get_json_value(
-        orig_data, config_path + 'objecttype')
+        orig_data, config_path + 'sequence_objecttype')
     if sequence_objecttype is None:
         util.return_error_response(
             'no sequence objecttype is defined in the base config')
     sequence_ref_field = util.get_json_value(
-        orig_data, config_path + 'ref_field')
+        orig_data, config_path + 'sequence_ref_field')
     if sequence_ref_field is None:
         util.return_error_response(
             'no sequence reference field is defined in the base config')
     sequence_num_field = util.get_json_value(
-        orig_data, config_path + 'num_field')
+        orig_data, config_path + 'sequence_num_field')
     if sequence_num_field is None:
         util.return_error_response(
             'no sequence number field is defined in the base config')
@@ -142,18 +142,18 @@ def main():
         # iterate over the templates for different fields, check if the fields need to be updated
 
         new_obj = obj
-        for update_column in objecttype_fields[objecttype]:
-            template = objecttype_fields[objecttype][update_column][0]
-            start_offset = objecttype_fields[objecttype][update_column][1]
-            only_insert = objecttype_fields[objecttype][update_column][2]
+        for column in objecttype_fields[objecttype]:
+            template = objecttype_fields[objecttype][column][0]
+            start_offset = objecttype_fields[objecttype][column][1]
+            only_insert = objecttype_fields[objecttype][column][2]
 
             util.write_tmp_file(
                 'fylr_sequence_plugin.json',
                 lines=[
                     'objecttype:',
                     objecttype,
-                    'update_column:',
-                    update_column,
+                    'column:',
+                    column,
                     'template:',
                     template,
                     'only_insert:',
@@ -168,7 +168,7 @@ def main():
                 continue
 
             field_value = util.get_json_value(
-                new_obj, '%s.%s' % (objecttype, update_column))
+                new_obj, '%s.%s' % (objecttype, column))
             if field_value not in [None, '']:
                 # field is already set, nothing to do here
                 continue
@@ -183,7 +183,7 @@ def main():
 
             seq = sequence.FylrSequence(
                 api_url,
-                '{0}:{1}.{2}'.format(PLUGIN_NAME, objecttype, update_column),
+                '{0}:{1}.{2}'.format(PLUGIN_NAME, objecttype, column),
                 access_token,
                 sequence_objecttype,
                 sequence_ref_field,
@@ -233,7 +233,7 @@ def main():
                         'reason': str(e)
                     }))
 
-                new_obj[objecttype][update_column] = new_value
+                new_obj[objecttype][column] = new_value
 
         obj = new_obj
         returned_objects.append(obj)

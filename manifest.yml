@@ -35,15 +35,15 @@ base_config:
 
   - name: fylr-sequence-plugin.insert_sequence.sequence
     parameters:
-      objecttype:
+      sequence_objecttype:
         type: text
         plugin_type: sequence_objecttype
         position: 0
-      ref_field:
+      sequence_ref_field:
         type: text
         plugin_type: sequence_ref_field
         position: 1
-      num_field:
+      sequence_num_field:
         type: text
         plugin_type: sequence_num_field
         position: 2

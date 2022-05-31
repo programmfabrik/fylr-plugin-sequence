@@ -6,6 +6,19 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                 return false
             return Mask.getMaskByMaskName("_all_fields", idTable)
 
+        filterTextField = (field) ->
+            return field instanceof TextColumn and
+                field not instanceof NestedTable and
+                field not instanceof NumberColumn and
+                field not instanceof LocaTextColumn and
+                not field.isTopLevelField() and
+                not field.insideNested()
+
+        filterNumberField = (field) =>
+            return field instanceof NumberColumn and
+                not field.isTopLevelField() and
+                not field.insideNested()
+
         switch def.plugin_type
 
             when "update_objecttype"
@@ -32,13 +45,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                     objecttype_data_key: "update_objecttype"
                     store_value: "fullname"
                     show_name: true
-                    filter: (field) ->
-                        return field instanceof TextColumn and
-                            field not instanceof NestedTable and
-                            field not instanceof NumberColumn and
-                            field not instanceof LocaTextColumn and
-                            not field.isTopLevelField() and
-                            not field.insideNested()
+                    filter: filterTextField
 
             when "sequence_objecttype"
                 field = new ez5.ObjecttypeSelector
@@ -54,7 +61,6 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                         objecttype.addMask(mask)
 
                         hasRefField = objecttype.getFields().some((field) -> field instanceof TextColumn)
-
                         hasNumField = objecttype.getFields().some((field) -> field instanceof NumberColumn)
 
                         return hasRefField and hasNumField
@@ -66,13 +72,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                     objecttype_data_key: "sequence_objecttype"
                     store_value: "fullname"
                     show_name: true
-                    filter: (field) ->
-                        return field instanceof TextColumn and
-                            field not instanceof NestedTable and
-                            field not instanceof NumberColumn and
-                            field not instanceof LocaTextColumn and
-                            not field.isTopLevelField() and
-                            not field.insideNested()
+                    filter: filterTextField
 
             when "sequence_num_field"
                 field = new ez5.FieldSelector
@@ -81,10 +81,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                     objecttype_data_key: "sequence_objecttype"
                     store_value: "fullname"
                     show_name: true
-                    filter: (field) =>
-                        return field instanceof NumberColumn and
-                            not field.isTopLevelField() and
-                            not field.insideNested()
+                    filter: filterNumberField
 
         return field
 

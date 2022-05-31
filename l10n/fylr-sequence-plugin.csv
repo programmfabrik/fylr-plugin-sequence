@@ -7,11 +7,11 @@ Für jeden Objekttyp können ein oder mehrere Felder definiert werden, die vom P
     * Auswahl des zu aktualisierenden Objekttyps
 * **Textfeld**
     * Wählen Sie das Textfeld aus, das aktualisiert werden soll.
-**Vorlage für Befüllen des Feldes**
+* **Vorlage für Befüllen des Feldes**
     * Geben Sie die Vorlage für den Text ein, der erzeugt werden soll.
     * Die Vorlage muss dem beschriebenen spezifischen Format entsprechen (siehe unten)
 * **Start-Offset für die Sequenz**
-    * optionaler ganzzahliger Wert, der zur fortlaufenden Nummer hinzuzufügen ist
+    * optionaler ganzzahliger Wert, der zur fortlaufenden Nummer addiert wird
 * **Feld nur befüllen, wenn das Objekt neu angelegt wird**
     * wenn aktiviert, bewirkt diese Option, dass aktualisierte Objekte (Version > 1) vom Plugin übersprungen werden
     * Aktivieren Sie diese Option, wenn Sie die Felder nur einmal bei der Erstellung des Objekts ausfüllen möchten.
@@ -28,7 +28,7 @@ Einige Beispiele für nützliche Platzhalter innerhalb der Vorlage sind:
 |---|---|---|
 | `%d` | Einfache Zahl | `13` |
 | `%04d` | Zahl mit vier führenden Nullen | `0027` |
-| ""%08x"" | Hexadezimalzahl mit acht führenden Nullen | ""00000BB9"" |","
+| `%08x` | Hexadezimalzahl mit acht führenden Nullen | `00000BB9` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -64,9 +64,9 @@ server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.update_column.label,Textfeld,Text Field
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.update_column.label|hint,-,-
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.template.label,Vorlage für Befüllen des Feldes,Template for field content
-server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.template.label|hint,im 'printf' Format: z.B. 'INV_%03d_NR' für eine Zahl mit 3 führenden Nullen: 'INV_001_NR',printf' format: for example use 'INV_%03d_NR' for a number with 3 leading zeros: 'INV_001_NR'
+server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.template.label|hint,-,-
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.start_offset.label,Start-Offset für die Sequenz,Start offset of the sequence
-server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.start_offset.label|hint,"(&ge; 0, optional)","(&ge; 0, optional)"
+server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.start_offset.label|hint,-,-
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.only_insert.label,-,-
 server.config.parameter.system.fylr-sequence-plugin.insert_sequence.objecttypes.objecttype_settings.only_insert.checkbox,"Feld nur befüllen, wenn das Objekt neu angelegt wird",Only fill this field if a new object is inserted
 server.config.name.system.fylr-sequence-plugin.insert_sequence.sequence,Einstellungen für Objekttyp zum Speichern der fortlaufenden Nummern (Sequenz),Settings for the objecttype to store sequential numbers
