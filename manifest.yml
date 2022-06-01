@@ -4,10 +4,11 @@ plugin:
   displayname:
     de-DE: "Sequence Plugin"
     en-US: "Sequence Plugin"
+  l10n: l10n/fylr-sequence-plugin.csv
   webfrontend:
     url: fylr-sequence-plugin.js
-    l10n: l10n/
 
+base_url_prefix: "src/webfrontend"
 
 # callback registration in fylr
 callbacks:

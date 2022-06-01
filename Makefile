@@ -1,41 +1,33 @@
-PLUGIN_NAME = fylr-sequence-plugin
+# config for Google CSV spreadsheet
+L10N = l10n/fylr-sequence-plugin.csv
+GKEY = 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
+GID_LOCA = 0
+GOOGLE_URL = https://docs.google.com/spreadsheets/u/1/d/$(GKEY)/export?format=csv&gid=
 
-L10N_FILES = l10n/$(PLUGIN_NAME).csv
-L10N_GOOGLE_KEY = 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
-L10N_GOOGLE_GID = 0
-
-
-INSTALL_FILES = \
-	$(WEB)/l10n/cultures.json \
-	$(WEB)/l10n/de-DE.json \
-	$(WEB)/l10n/en-US.json \
-	src/server/insert_sequence.py \
-	src/server/sequence.py \
-	$(JS) \
-	manifest.yml
-
-
+# config to build javascript
+JS = src/webfrontend/fylr-sequence-plugin.js
 COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee
 
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-all: google_csv build
+google-csv: ## get loca CSV from google
+	curl --silent -L -o - "$(GOOGLE_URL)$(GID_LOCA)" | tr -d "\r" > $(L10N)
 
-include easydb-library/tools/base-plugins.make
+all: google-csv build ## pull CSV & build
 
-build: code $(L10N) buildinfojson
+build: code ## build all
 
-code: $(JS)
+code: $(JS) ## build Coffeescript code
 
-clean: clean-base
+clean: ## clean build files
 	rm -f src/server/*.pyc
-
-wipe: wipe-base
-
+	rm -f $(JS)
 
 apitest-dep:
 	go install github.com/programmfabrik/apitest@latest
 
-apitest: apitest-dep
+apitest: apitest-dep ## run apitest
 	# Use APITEST to configure the apitest binary to use for the apitests
 	# This defaults to "apitest" in your PATH
 	#
@@ -43,3 +35,11 @@ apitest: apitest-dep
 	# export APITEST_PARAMS="--server http://root:admin@localhost:8080/api/v1"
 
 	echo "-d apitest" | xargs $(APITEST) $(APITEST_PARAMS)
+
+${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
+	mkdir -p $(dir $@)
+	cat $^ > $@
+
+%.coffee.js: %.coffee
+	coffee -b -p --compile "$^" > "$@" || ( rm -f "$@" ; false )
+
