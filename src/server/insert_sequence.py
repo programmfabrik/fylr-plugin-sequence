@@ -11,15 +11,6 @@ import json
 PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
-def return_unchanged_objects(orig_data):
-    objects = util.get_json_value(orig_data, 'objects')
-    if objects is None:
-        objects = []
-    util.return_response({
-        'objects': objects
-    })
-
-
 @util.handle_exceptions
 def main():
 
@@ -28,9 +19,9 @@ def main():
     # get the objects from the input data
     objects = util.get_json_value(orig_data, 'objects')
     if not isinstance(objects, list):
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
     if len(objects) < 1:
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
 
     # get the server url
     api_url = util.get_json_value(orig_data, 'info.api_url')
@@ -55,21 +46,21 @@ def main():
     sequence_objecttype = util.get_json_value(
         orig_data, config_path + 'sequence_objecttype')
     if sequence_objecttype is None or len(sequence_objecttype) < 1:
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
     sequence_ref_field = util.get_json_value(
         orig_data, config_path + 'sequence_ref_field')
     if sequence_ref_field is None or len(sequence_ref_field) < 1:
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
     sequence_num_field = util.get_json_value(
         orig_data, config_path + 'sequence_num_field')
     if sequence_num_field is None or len(sequence_num_field) < 1:
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
 
     # objecttypes/fields settings
     ot_settings = util.get_json_value(
         orig_data, main_config_path + 'objecttypes.objecttype_settings')
     if not isinstance(ot_settings, list):
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
 
     objecttype_fields = {}
     for config_entry in ot_settings:
@@ -108,15 +99,13 @@ def main():
             template, start_offset, only_insert)
 
     if objecttype_fields == {}:
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
 
     # iterate over objects and check if the name must be set
     if not isinstance(objects, list):
-        return_unchanged_objects(orig_data)
+        util.return_empty_objects()
 
-    any_changes = False
-
-    returned_objects = []
+    updated_objects = []
 
     for i in range(len(objects)):
         obj = objects[i]
@@ -127,12 +116,11 @@ def main():
         objecttype = util.get_json_value(obj, '_objecttype')
         if objecttype not in objecttype_fields:
             # another objecttype was inserted, nothing to do here
-            returned_objects.append(obj)
             continue
 
         # iterate over the templates for different fields, check if the fields need to be updated
 
-        new_obj = obj
+        obj_changed = False
         for column in objecttype_fields[objecttype]:
             template = objecttype_fields[objecttype][column][0]
             start_offset = objecttype_fields[objecttype][column][1]
@@ -141,11 +129,10 @@ def main():
             # skip if the object was updated but the field setting for only_insert is true
             if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
                 # object was updated, nothing to do here
-                returned_objects.append(obj)
                 continue
 
             field_value = util.get_json_value(
-                new_obj, '%s.%s' % (objecttype, column))
+                obj, '%s.%s' % (objecttype, column))
             if field_value not in [None, '']:
                 # field is already set, nothing to do here
                 continue
@@ -202,18 +189,16 @@ def main():
                         'reason': str(e)
                     }))
 
-                new_obj[objecttype][column] = new_value
+                obj[objecttype][column] = new_value
+                obj_changed = True
 
-        obj = new_obj
-        returned_objects.append(obj)
+        if obj_changed:
+            updated_objects.append(obj)
 
-    # everything ok, update and return the objects, exit program
-
-    response = orig_data
-    if any_changes:
-        response['objects'] = returned_objects
-
-    util.return_response(response)
+    # everything ok, return only the updated objects, exit program
+    util.return_response({
+        'objects': updated_objects
+    })
 
 
 if __name__ == '__main__':
