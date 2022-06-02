@@ -1,5 +1,5 @@
 {
-    "name": "fylr-sequence-plugin",
+    "name": "fylr-plugin-sequence",
     "header_from_store": {
         "Authorization": "root-token"
     },
@@ -28,4 +28,4 @@
         // cs_image.description must only be filled when the object is created
         , "@update_cs_image.json"
     ]
-} 
+}

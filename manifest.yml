@@ -1,12 +1,12 @@
 plugin:
-  name: fylr-sequence-plugin
+  name: fylr-plugin-sequence
   version: 1
   displayname:
     de-DE: "Sequence Plugin"
     en-US: "Sequence Plugin"
-  l10n: l10n/fylr-sequence-plugin.csv
+  l10n: l10n/fylr-plugin-sequence.csv
   webfrontend:
-    url: fylr-sequence-plugin.js
+    url: fylr-plugin-sequence.js
 
 base_url_prefix: "src/webfrontend"
 
@@ -34,7 +34,7 @@ callbacks:
 
 base_config:
 
-  - name: fylr-sequence-plugin.insert_sequence.sequence
+  - name: fylr-plugin-sequence.insert_sequence.sequence
     parameters:
       sequence_objecttype:
         type: text
@@ -49,7 +49,7 @@ base_config:
         plugin_type: sequence_num_field
         position: 2
 
-  - name: fylr-sequence-plugin.insert_sequence.objecttypes
+  - name: fylr-plugin-sequence.insert_sequence.objecttypes
     parameters:
       objecttype_settings:
         type: table
@@ -64,7 +64,6 @@ base_config:
             position: 1
           - name: template
             type: text
-            regex: "^.*%(?:[0#-+ ][1-9]+){0,1}[dioxXeEfFgGc]{0,1}.*$"
             position: 2
           - name: start_offset
             default: 0

@@ -1,11 +1,11 @@
 # config for Google CSV spreadsheet
-L10N = l10n/fylr-sequence-plugin.csv
+L10N = l10n/fylr-plugin-sequence.csv
 GKEY = 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
 GID_LOCA = 0
 GOOGLE_URL = https://docs.google.com/spreadsheets/u/1/d/$(GKEY)/export?format=csv&gid=
 
 # config to build javascript
-JS = src/webfrontend/fylr-sequence-plugin.js
+JS = src/webfrontend/fylr-plugin-sequence.js
 COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee
 
 help:

@@ -7,18 +7,21 @@ import fylr_lib_plugin_python3.util as util
 import sequence as sequence
 import json
 
-# todo: load multiple entries from baseconfig
-# OBJECTTYPE = 'cs_image'
-# NAME_FIELD = 'name'
 
-PLUGIN_NAME = 'fylr-sequence-plugin'
-NAME_PREFIX = 'HU'
+PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
 @util.handle_exceptions
 def main():
 
     orig_data = json.loads(sys.stdin.read())
+
+    # get the objects from the input data
+    objects = util.get_json_value(orig_data, 'objects')
+    if not isinstance(objects, list):
+        util.return_response(objects)
+    if len(objects) < 1:
+        util.return_response(objects)
 
     # get the server url
     api_url = util.get_json_value(orig_data, 'info.api_url')
@@ -33,24 +36,31 @@ def main():
         util.return_error_response('info.api_user_access_token missing!')
 
     # load base config for this plugin
+    # directly return the original data if there are any configurations missing
     main_config_path = 'info.config.plugin.' + PLUGIN_NAME + \
         '.config.' + PLUGIN_NAME + '\.insert_sequence\.'
 
-    util.write_tmp_file(
-        'fylr_sequence_plugin.json',
-        new_file=True,
-        lines=[
-            util.dumpjs(util.get_json_value(
-                orig_data, 'info.config.plugin.' + PLUGIN_NAME))
-        ]
-    )
+    # sequence objecttype settings
+    config_path = main_config_path + 'sequence.'
+
+    sequence_objecttype = util.get_json_value(
+        orig_data, config_path + 'sequence_objecttype')
+    if sequence_objecttype is None or len(sequence_objecttype) < 1:
+        util.return_response(objects)
+    sequence_ref_field = util.get_json_value(
+        orig_data, config_path + 'sequence_ref_field')
+    if sequence_ref_field is None or len(sequence_ref_field) < 1:
+        util.return_response(objects)
+    sequence_num_field = util.get_json_value(
+        orig_data, config_path + 'sequence_num_field')
+    if sequence_num_field is None or len(sequence_num_field) < 1:
+        util.return_response(objects)
 
     # objecttypes/fields settings
     ot_settings = util.get_json_value(
         orig_data, main_config_path + 'objecttypes.objecttype_settings')
     if not isinstance(ot_settings, list):
-        util.return_error_response(
-            'no list of objecttype/field settings are defined in the base config')
+        util.return_response(objects)
 
     objecttype_fields = {}
     for config_entry in ot_settings:
@@ -88,40 +98,12 @@ def main():
         objecttype_fields[objecttype][column] = (
             template, start_offset, only_insert)
 
-    util.write_tmp_file(
-        'fylr_sequence_plugin.json',
-        lines=[
-            'ot_fields:',
-            util.dumpjs(objecttype_fields)
-        ]
-    )
-
     if objecttype_fields == {}:
-        util.return_response(orig_data)
-
-    # sequence objecttype settings
-    config_path = main_config_path + 'sequence.'
-
-    sequence_objecttype = util.get_json_value(
-        orig_data, config_path + 'sequence_objecttype')
-    if sequence_objecttype is None:
-        util.return_error_response(
-            'no sequence objecttype is defined in the base config')
-    sequence_ref_field = util.get_json_value(
-        orig_data, config_path + 'sequence_ref_field')
-    if sequence_ref_field is None:
-        util.return_error_response(
-            'no sequence reference field is defined in the base config')
-    sequence_num_field = util.get_json_value(
-        orig_data, config_path + 'sequence_num_field')
-    if sequence_num_field is None:
-        util.return_error_response(
-            'no sequence number field is defined in the base config')
+        util.return_response(objects)
 
     # iterate over objects and check if the name must be set
-    objects = util.get_json_value(orig_data, 'objects')
     if not isinstance(objects, list):
-        util.return_response(orig_data)
+        util.return_response(objects)
 
     any_changes = False
 
@@ -146,20 +128,6 @@ def main():
             template = objecttype_fields[objecttype][column][0]
             start_offset = objecttype_fields[objecttype][column][1]
             only_insert = objecttype_fields[objecttype][column][2]
-
-            util.write_tmp_file(
-                'fylr_sequence_plugin.json',
-                lines=[
-                    'objecttype:',
-                    objecttype,
-                    'column:',
-                    column,
-                    'template:',
-                    template,
-                    'only_insert:',
-                    only_insert,
-                ]
-            )
 
             # skip if the object was updated but the field setting for only_insert is true
             if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
@@ -188,15 +156,7 @@ def main():
                 sequence_objecttype,
                 sequence_ref_field,
                 sequence_num_field,
-                log_in_tmp_file=True)  # xxx
-
-            util.write_tmp_file(
-                'fylr_sequence_plugin.json',
-                lines=[
-                    'FylrSequence:',
-                    str(seq),
-                ]
-            )
+                log_in_tmp_file=False)
 
             do_repeat = True
             repeated = 0

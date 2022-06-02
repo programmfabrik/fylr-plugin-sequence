@@ -1,4 +1,4 @@
-# fylr-sequence-plugin
+# fylr-plugin-sequence
 
 This plugin allows the automatic filling of configurable empty fields in inserted objects based on sequential numbers.
 
