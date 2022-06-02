@@ -11,6 +11,15 @@ import json
 PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
+def return_unchanged_objects(orig_data):
+    objects = util.get_json_value(orig_data, 'objects')
+    if objects is None:
+        objects = []
+    util.return_response({
+        'objects': objects
+    })
+
+
 @util.handle_exceptions
 def main():
 
@@ -19,9 +28,9 @@ def main():
     # get the objects from the input data
     objects = util.get_json_value(orig_data, 'objects')
     if not isinstance(objects, list):
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
     if len(objects) < 1:
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
 
     # get the server url
     api_url = util.get_json_value(orig_data, 'info.api_url')
@@ -46,21 +55,21 @@ def main():
     sequence_objecttype = util.get_json_value(
         orig_data, config_path + 'sequence_objecttype')
     if sequence_objecttype is None or len(sequence_objecttype) < 1:
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
     sequence_ref_field = util.get_json_value(
         orig_data, config_path + 'sequence_ref_field')
     if sequence_ref_field is None or len(sequence_ref_field) < 1:
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
     sequence_num_field = util.get_json_value(
         orig_data, config_path + 'sequence_num_field')
     if sequence_num_field is None or len(sequence_num_field) < 1:
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
 
     # objecttypes/fields settings
     ot_settings = util.get_json_value(
         orig_data, main_config_path + 'objecttypes.objecttype_settings')
     if not isinstance(ot_settings, list):
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
 
     objecttype_fields = {}
     for config_entry in ot_settings:
@@ -99,11 +108,11 @@ def main():
             template, start_offset, only_insert)
 
     if objecttype_fields == {}:
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
 
     # iterate over objects and check if the name must be set
     if not isinstance(objects, list):
-        util.return_response(objects)
+        return_unchanged_objects(orig_data)
 
     any_changes = False
 
