@@ -12,6 +12,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          sudo npm install -g coffeescript@1.12.7
+
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
