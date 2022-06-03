@@ -10,6 +10,8 @@ COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee
 PLUGIN_NAME = fylr-plugin-sequence
 BUILD_DIR = build
 
+ZIP_NAME ?= "${PLUGIN_NAME}.zip"
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -45,7 +47,7 @@ apitest: apitest-dep ## run apitest
 	echo "-d apitest" | xargs $(APITEST) $(APITEST_PARAMS)
 
 zip: build ## build zip file for publishing
-	cd $(BUILD_DIR) && zip $(PLUGIN_NAME).zip -r $(PLUGIN_NAME)
+	cd $(BUILD_DIR) && zip ${ZIP_NAME} -r $(PLUGIN_NAME)
 
 ${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
 	mkdir -p $(dir $@)
