@@ -8,6 +8,7 @@ GOOGLE_URL = https://docs.google.com/spreadsheets/u/1/d/$(GKEY)/export?format=cs
 JS = src/webfrontend/fylr-plugin-sequence.js
 COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee
 PLUGIN_NAME = fylr-plugin-sequence
+BUILD_DIR = build
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -17,15 +18,19 @@ google-csv: ## get loca CSV from google
 
 all: google-csv build ## pull CSV & build
 
-build: code ## build all
+build: clean code ## build all (creates build folder)
+	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)
+	cp manifest.master.yml $(BUILD_DIR)/$(PLUGIN_NAME)/manifest.yml
+	cp -r src/server l10n $(BUILD_DIR)/$(PLUGIN_NAME)
+	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
+	cp -r $(JS) $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
 
 code: $(JS) ## build Coffeescript code
 
 clean: ## clean build files
 	rm -f src/server/*.pyc
 	rm -f $(JS)
-	rm -f $(ZIP_FILE)
-	rm -rf $(PLUGIN_NAME)
+	rm -rf $(BUILD_DIR)
 
 apitest-dep:
 	go install github.com/programmfabrik/apitest@latest
@@ -39,13 +44,8 @@ apitest: apitest-dep ## run apitest
 
 	echo "-d apitest" | xargs $(APITEST) $(APITEST_PARAMS)
 
-zip: ## build zip file for publishing
-	rm -f $(PLUGIN_NAME).zip
-	rm -rf $(PLUGIN_NAME)
-	mkdir $(PLUGIN_NAME)
-	cp -r src l10n README.md $(PLUGIN_NAME)/
-	zip $(PLUGIN_NAME).zip -r $(PLUGIN_NAME)
-	rm -rf $(PLUGIN_NAME)
+zip: build ## build zip file for publishing
+	cd $(BUILD_DIR) && zip $(PLUGIN_NAME).zip -r $(PLUGIN_NAME)
 
 ${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
 	mkdir -p $(dir $@)

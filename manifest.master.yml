@@ -8,7 +8,7 @@ plugin:
   webfrontend:
     url: fylr-plugin-sequence.js
 
-base_url_prefix: "src/webfrontend"
+base_url_prefix: "webfrontend"
 
 # callback registration in fylr
 callbacks:
@@ -30,7 +30,7 @@ callbacks:
                 type: body
               args:
                 - type: value
-                  value: "%_exec.pluginDir%/src/server/insert_sequence.py"
+                  value: "%_exec.pluginDir%/server/insert_sequence.py"
 
 base_config:
 
