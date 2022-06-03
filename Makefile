@@ -31,6 +31,7 @@ code: $(JS) ## build Coffeescript code
 
 clean: ## clean build files
 	rm -f src/server/*.pyc
+	rm -f src/webfrontend/*.coffee.js
 	rm -f $(JS)
 	rm -rf $(BUILD_DIR)
 
