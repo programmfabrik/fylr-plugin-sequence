@@ -5,7 +5,7 @@
             "header_from_store": {
                 "Authorization": "root-token"
             },
-            "endpoint": "settings/purgeall",
+            "endpoint": "system/purgeall",
             "method": "POST"
         }
     }

@@ -5,7 +5,7 @@
             "header_from_store": {
                 "Authorization": "root-token"
             },
-            "endpoint": "settings/reindex",
+            "endpoint": "system/reindex",
             "query_params": {
                 "blockFrontend": "1"
             },
@@ -21,7 +21,7 @@
     {
         "name": "Wait for index"
         ,"request": {
-            "endpoint": "settings/status",
+            "endpoint": "system/status",
             "method": "GET",
             "header_from_store": {
                 "Authorization": "root-token"
