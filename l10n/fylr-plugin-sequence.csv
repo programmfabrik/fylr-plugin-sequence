@@ -91,6 +91,8 @@ Das Plugin prüft diese Anforderungen nicht, sondern geht davon aus, dass dieser
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel"
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.enabled.checkbox,aktiviert,enabled
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.enabled.label,-,-
 server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_objecttype.label,Objekttyp,Objecttype
 server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_objecttype.label|hint,-,-
 server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_ref_field.label,Referenzfeld,Reference Field

@@ -57,9 +57,19 @@ class FylrSequence(object):
         if not isinstance(objects, list):
             raise Exception('invalid response: expected array - ' + api_resp)
 
+        sequence_exists = False
         for obj in objects:
+
+            # ignore all sequence objects that have been deleted
+            # CAUTION: deleting sequence objects can cause unique constraint violations if old numbers of the sequence are reused
+            if '_latest_version_deleted_at' in obj:
+                continue
+
+            # ignore all sequence objects that have a different reference
             if util.get_json_value(obj, self.sequence_objecttype + '.' + self.sequence_ref_field) != self.ref:
                 continue
+
+            sequence_exists = True
 
             # get the last used number of the sequence
             n = util.get_json_value(
@@ -75,6 +85,9 @@ class FylrSequence(object):
                 obj, self.sequence_objecttype + '._version')
 
             break
+
+        if not sequence_exists:
+            self.current_number = 1
 
         # return the next free number of the sequence
         return self.current_number

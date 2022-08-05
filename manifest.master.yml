@@ -54,22 +54,26 @@ base_config:
       objecttype_settings:
         type: table
         fields:
+          - name: enabled
+            type: bool
+            default: true
+            position: 0
           - name: update_objecttype
             type: text
             plugin_type: update_objecttype
-            position: 0
+            position: 1
           - name: update_column
             type: text
             plugin_type: update_column
-            position: 1
+            position: 2
           - name: template
             type: text
-            position: 2
+            position: 3
           - name: start_offset
             default: 0
             type: int
-            position: 3
+            position: 4
           - name: only_insert
             type: bool
-            position: 4
+            position: 5
         position: 0
