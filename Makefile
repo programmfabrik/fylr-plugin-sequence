@@ -7,6 +7,7 @@ GOOGLE_URL = https://docs.google.com/spreadsheets/u/1/d/$(GKEY)/export?format=cs
 # config to build javascript
 JS = src/webfrontend/fylr-plugin-sequence.js
 COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee \
+               src/webfrontend/SequencePluginPoolNode.coffee \
 			   src/webfrontend/SequencePluginPool.coffee
 PLUGIN_NAME = fylr-plugin-sequence
 BUILD_DIR = build
