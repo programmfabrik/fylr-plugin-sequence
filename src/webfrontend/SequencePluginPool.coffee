@@ -2,7 +2,6 @@ class ez5.SequencePluginPool extends ez5.PoolPlugin
 
 	initOpts: ->
 		super()
-		debugger
 		@data = @opts.pool?._pool?.pool?.custom_data?.sequence_plugin or []
 
 		return
@@ -20,15 +19,19 @@ class ez5.SequencePluginPool extends ez5.PoolPlugin
 		@tree = new ListViewEditTree
 			fixedRows: 1
 			class: 'cui-lv--has-datafields'
-			cols: ["auto","auto","auto"]
+			cols: ["maximize","auto","auto","auto","auto"]
 			rowMove: false
 			selectableRows: true
 			fields: [
-				th_label: "Template"
+				th_label: "sequence-plugin-pool.template"
 			,
-				th_label: "Objecctype"
+				th_label: "sequence-plugin-pool.start_offset"
 			,
-				th_label: "Field"
+				th_label: "sequence-plugin-pool.objecttype"
+			,
+				th_label: "sequence-plugin-pool.field"
+			,
+				th_label: "sequence-plugin-pool.only_insert"
 			]
 			footer_left: [
 				icon: "plus"

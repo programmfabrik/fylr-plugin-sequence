@@ -2,6 +2,61 @@
 
 import fylr_lib_plugin_python3.util as util
 import json
+import time
+
+
+def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequence_objecttype, sequence_ref_field, sequence_num_field):
+
+    # repeat:
+    # 1:    get the next number of the sequence (from an existing object, or 1 if the sequence has not been used yet)
+    # 2:    determine the new maximum number of the sequence
+    # 3:    try to update the sequence object (protected by object version)
+    # 4:    if the sequence was updated, update and return the objects, break loop
+
+    seq = FylrSequence(
+        api_url,
+        '{0}:{1}.{2}'.format(plugin_name, objecttype, column),
+        access_token,
+        sequence_objecttype,
+        sequence_ref_field,
+        sequence_num_field,
+        log_in_tmp_file=False
+    )
+
+    do_repeat = True
+    repeated = 0
+    max_repeat = 3
+
+    while do_repeat:
+        do_repeat = False
+
+        offset = seq.get_next_number()
+
+        # update the new sequence to check if it has not been changed by another instance
+        update_ok, error = seq.update(offset + 1)
+
+        if error is not None:
+            # indicator that something went wrong and the plugin should just return an error message
+            util.return_error_response(util.dumpjs({
+                'error': 'could not update sequence',
+                'reason': error
+            }))
+
+        if not update_ok:
+            # sleep for 1 second and try again to get and update the sequence
+            time.sleep(1)
+
+            repeated += 1
+
+            if repeated >= max_repeat:
+                break
+
+            do_repeat = True
+            continue
+
+        return offset
+
+    return None
 
 
 class FylrSequence(object):
@@ -21,13 +76,11 @@ class FylrSequence(object):
         self.sequence_objecttype = sequence_objecttype
 
         if sequence_ref_field.startswith(sequence_objecttype + '.'):
-            sequence_ref_field = sequence_ref_field[len(
-                sequence_objecttype) + 1:]
+            sequence_ref_field = sequence_ref_field[len(sequence_objecttype) + 1:]
         self.sequence_ref_field = sequence_ref_field
 
         if sequence_num_field.startswith(sequence_objecttype + '.'):
-            sequence_num_field = sequence_num_field[len(
-                sequence_objecttype) + 1:]
+            sequence_num_field = sequence_num_field[len(sequence_objecttype) + 1:]
         self.sequence_num_field = sequence_num_field
 
     def __str__(self) -> str:
@@ -47,8 +100,7 @@ class FylrSequence(object):
         api_resp, statuscode = self.get_from_api(path)
 
         if statuscode != 200:
-            raise Exception('invalid response: ' +
-                            str(statuscode) + ' - ' + api_resp)
+            raise Exception('invalid response: ' + str(statuscode) + ' - ' + api_resp)
 
         if len(api_resp) < 1:
             raise Exception('invalid response: expected non-empty body')
@@ -72,17 +124,14 @@ class FylrSequence(object):
             sequence_exists = True
 
             # get the last used number of the sequence
-            n = util.get_json_value(
-                obj, self.sequence_objecttype + '.' + self.sequence_num_field)
+            n = util.get_json_value(obj, self.sequence_objecttype + '.' + self.sequence_num_field)
             if n is None or n < 1:
                 n = 1
 
             # update offset, object id and version
             self.current_number = n
-            self.obj_id = util.get_json_value(
-                obj, self.sequence_objecttype + '._id')
-            self.version = util.get_json_value(
-                obj, self.sequence_objecttype + '._version')
+            self.obj_id = util.get_json_value(obj, self.sequence_objecttype + '._id')
+            self.version = util.get_json_value(obj, self.sequence_objecttype + '._version')
 
             break
 

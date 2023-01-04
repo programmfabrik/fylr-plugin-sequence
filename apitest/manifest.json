@@ -27,5 +27,9 @@
         // cs_image.name must always be filled when the object is updated
         // cs_image.description must only be filled when the object is created
         , "@update_cs_image.json"
+
+        ////////////////////////////
+
+        //
     ]
 }

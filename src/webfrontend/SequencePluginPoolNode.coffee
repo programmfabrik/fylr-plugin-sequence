@@ -10,6 +10,14 @@ class SequencePluginPoolNode extends ListViewEditTreeNode
 			placeholder: "Template"
 			name: "template"
 		,
+			type: CUI.Input
+			placeholder: "Offset"
+			name: "start_offset"
+			checkInput: (value) ->
+				if value.match(/^[0-9]*$/)
+					return true
+				return false
+		,
 			type: CUI.DataFieldProxy
 			name: "objecttype"
 			element: (df) =>
@@ -20,6 +28,9 @@ class SequencePluginPoolNode extends ListViewEditTreeNode
 					show_name: true
 					store_value: "fullname"
 					filter: (objecttype) ->
+						if not objecttype.poolLink()
+							return false
+
 						mask = Mask.getMaskByMaskName("_all_fields", objecttype.table.id())
 						if not mask
 							return false
@@ -37,7 +48,7 @@ class SequencePluginPoolNode extends ListViewEditTreeNode
 				data = df.getData()
 				fieldSelector = new ez5.FieldSelector
 					objecttype_data_key: "objecttype"
-					store_value: "fullname"
+					store_value: "name"
 					name: "field"
 					data: data
 					show_name: true
@@ -45,6 +56,10 @@ class SequencePluginPoolNode extends ListViewEditTreeNode
 						return field instanceof TextColumn and not field.isSystemField()
 
 				return fieldSelector.start()
+		,
+			type: CUI.Checkbox
+			placeholder: "Only Insert"
+			name: "only_insert"
 		]
 
 

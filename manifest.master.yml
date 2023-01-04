@@ -16,6 +16,12 @@ callbacks:
     steps:
       - name: "automatic filling of emtpy fields with sequential numbers"
         callback: insert_sequence
+        # xxx
+        filter:
+          type: objecttype
+          objecttypes:
+            - inventory
+        # xxx
     callbacks:
       insert_sequence:
         exec:
@@ -30,7 +36,7 @@ callbacks:
                 type: body
               args:
                 - type: value
-                  value: "%_exec.pluginDir%/server/insert_sequence.py"
+                  value: "%_exec.pluginDir%/server/main.py"
 
 base_config:
 

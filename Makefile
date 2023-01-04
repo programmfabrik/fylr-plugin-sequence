@@ -50,7 +50,7 @@ apitest: apitest-dep ## run apitest
 	echo "-d apitest" | xargs $(APITEST) $(APITEST_PARAMS)
 
 zip: build ## build zip file for publishing
-	cd $(BUILD_DIR) && zip ${ZIP_NAME} -r $(PLUGIN_NAME)
+	cd $(BUILD_DIR) && zip ${ZIP_NAME} -r $(PLUGIN_NAME) -x *.git*
 
 ${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
 	mkdir -p $(dir $@)
