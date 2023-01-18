@@ -16,12 +16,6 @@ callbacks:
     steps:
       - name: "automatic filling of emtpy fields with sequential numbers"
         callback: insert_sequence
-        # xxx
-        filter:
-          type: objecttype
-          objecttypes:
-            - inventory
-        # xxx
     callbacks:
       insert_sequence:
         exec:

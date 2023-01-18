@@ -1,20 +1,22 @@
-{{ range $idx, $plugin := (datastore "plugins") }}
-    {{ if eq $plugin.name "fylr_example" }}
-        {
-            "name": "enable fylr_example plugin",
-            "request": {
-                "endpoint": "plugin/manage/{{ $plugin.id }}",
-                "method": "POST",
-                "body": {
-                    "id": {{ $plugin.id }},
-                    "enabled": true
-                }
-            },
-            "response": {
-                "body": {
-                    "enabled": true
+[
+    {{ range $idx, $plugin := (datastore "plugins") }}
+        {{ if eq $plugin.name "fylr_example" }}
+            {
+                "name": "enable fylr_example plugin",
+                "request": {
+                    "endpoint": "plugin/manage/{{ $plugin.id }}",
+                    "method": "POST",
+                    "body": {
+                        "id": {{ $plugin.id }},
+                        "enabled": true
+                    }
+                },
+                "response": {
+                    "body": {
+                        "enabled": true
+                    }
                 }
             }
-        }
+        {{ end }}
     {{ end }}
-{{ end }}
+]

@@ -121,7 +121,7 @@
             {
                 "name": "inventory",
                 "table_id": 249,
-                "pool_link": false,
+                "pool_link": true,
                 "acl_table": false,
                 "has_tags": false,
                 "is_hierarchical": false,

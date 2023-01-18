@@ -12,8 +12,7 @@ import templates
 PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
-@util.handle_exceptions
-def main():
+if __name__ == '__main__':
 
     orig_data = json.loads(sys.stdin.read())
 
@@ -112,10 +111,6 @@ def main():
 
         objecttype_fields[objecttype][column] = (template, start_offset, only_insert)
 
-    # iterate over objects and check if the name must be set
-    if not isinstance(objects, list):
-        util.return_empty_objects()
-
     # iterate over the objects, collect the pool id(s) to load the pool configuration
     pool_ids = set()
     for i in range(len(objects)):
@@ -173,48 +168,49 @@ def main():
         # check if the fields need to be updated
         obj_changed = False
         column_templates = util.get_json_value(objecttype_fields, objecttype)
+        if column_templates is None:
+            column_templates = {}
 
-        if isinstance(column_templates, dict):
-            for column in column_templates:
-                template = column_templates[column][0]
-                start_offset = column_templates[column][1]
-                only_insert = column_templates[column][2]
+        for column in column_templates:
+            template = column_templates[column][0]
+            start_offset = column_templates[column][1]
+            only_insert = column_templates[column][2]
 
-                # skip if the object was updated but the field setting for only_insert is true
-                if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
-                    # object was updated, nothing to do here
-                    continue
+            # skip if the object was updated but the field setting for only_insert is true
+            if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
+                # object was updated, nothing to do here
+                continue
 
-                field_value = util.get_json_value(obj, '%s.%s' % (objecttype, column))
-                if field_value not in [None, '']:
-                    # field is already set, nothing to do here
-                    continue
+            field_value = util.get_json_value(obj, '%s.%s' % (objecttype, column))
+            if field_value not in [None, '']:
+                # field is already set, nothing to do here
+                continue
 
-                # format new field value based on the sequence and update new obj
-                sequence_offset = sequence.get_next_offset(
-                    PLUGIN_NAME,
-                    api_url,
-                    access_token,
-                    objecttype,
-                    column,
-                    sequence_objecttype,
-                    sequence_ref_field,
-                    sequence_num_field
-                )
-                if sequence_offset is None:
-                    continue
+            # format new field value based on the sequence and update new obj
+            sequence_offset = sequence.get_next_offset(
+                PLUGIN_NAME,
+                api_url,
+                access_token,
+                objecttype,
+                column,
+                sequence_objecttype,
+                sequence_ref_field,
+                sequence_num_field
+            )
+            if sequence_offset is None:
+                continue
 
-                # sequence was updated, unique sequence values can be used to update objects
-                try:
-                    new_value = template % (start_offset + sequence_offset)
-                except TypeError as e:
-                    util.return_error_response(util.dumpjs({
-                        'error': 'template "' + template + '" is invalid to format a sequential string',
-                        'reason': str(e)
-                    }))
+            # sequence was updated, unique sequence values can be used to update objects
+            try:
+                new_value = template % (start_offset + sequence_offset)
+            except TypeError as e:
+                util.return_error_response(util.dumpjs({
+                    'error': 'template "' + template + '" is invalid to format a sequential string',
+                    'reason': str(e)
+                }))
 
-                obj[objecttype][column] = new_value
-                obj_changed = True
+            obj[objecttype][column] = new_value
+            obj_changed = True
 
         # check if the object is in a pool and if this pool has (inherited) custom data template settings
         if pool_id in pool_customdata:
@@ -262,7 +258,3 @@ def main():
     util.return_response({
         'objects': updated_objects
     })
-
-
-if __name__ == '__main__':
-    main()

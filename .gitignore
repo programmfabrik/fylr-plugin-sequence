@@ -5,6 +5,7 @@ build-stamp-l10n
 
 *.js
 *.txt
+*.zip
+*.pyc
 
 build-info.json
-fylr-plugin-sequence.zip

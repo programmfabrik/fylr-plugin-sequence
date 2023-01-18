@@ -5,12 +5,14 @@
                 "fylr-plugin-sequence.insert_sequence.objecttypes": {
                     "objecttype_settings": [
                         {
+                            "enabled": true,
                             "update_objecttype": "cs_image",
                             "update_column": "cs_image.name",
                             "template": "HU%06d",
                             "only_insert": false
                         },
                         {
+                            "enabled": true,
                             "update_objecttype": "cs_image",
                             "update_column": "cs_image.description",
                             "template": "DESC: #%04d",
@@ -18,6 +20,7 @@
                             "only_insert": true
                         },
                         {
+                            "enabled": false,
                             "update_objecttype": "inventory",
                             "update_column": "inventory.inv_nr",
                             "template": "INV_%05d",

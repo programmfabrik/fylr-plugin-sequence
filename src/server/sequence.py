@@ -5,7 +5,7 @@ import json
 import time
 
 
-def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequence_objecttype, sequence_ref_field, sequence_num_field):
+def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequence_objecttype, sequence_ref_field, sequence_num_field, log_in_tmp_file=False):
 
     # repeat:
     # 1:    get the next number of the sequence (from an existing object, or 1 if the sequence has not been used yet)
@@ -20,7 +20,7 @@ def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequ
         sequence_objecttype,
         sequence_ref_field,
         sequence_num_field,
-        log_in_tmp_file=False
+        log_in_tmp_file=log_in_tmp_file
     )
 
     do_repeat = True
@@ -161,10 +161,8 @@ class FylrSequence(object):
             }
         }
 
-        resp, statuscode = util.post_to_api(
-            self.api_url,
+        resp, statuscode = self.post_to_api(
             'db/' + self.sequence_objecttype,
-            self.access_token,
             util.dumpjs([new_obj])
         )
 
