@@ -69,11 +69,15 @@ base_config:
           - name: template
             type: text
             position: 3
+          - name: obj_field
+            type: text
+            plugin_type: obj_field
+            position: 4
           - name: start_offset
             default: 0
             type: int
-            position: 4
+            position: 5
           - name: only_insert
             type: bool
-            position: 5
+            position: 6
         position: 0

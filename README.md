@@ -36,6 +36,10 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -46,6 +50,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -55,6 +61,7 @@ Some examples for useful placeholders inside the template are:
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four trailing zeros | `0027` |
 | `%08x` | Hexadecimal number with eight trailing zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |
 
 ## FylrSequence
 
