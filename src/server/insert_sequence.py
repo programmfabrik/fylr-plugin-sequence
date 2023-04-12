@@ -10,7 +10,6 @@ import json
 
 
 PLUGIN_NAME = 'fylr-plugin-sequence'
-NA = '[N/A]'
 
 
 @util.handle_exceptions
@@ -85,6 +84,8 @@ def main():
             else:
                 obj_field = None
 
+        no_sequence_if_empty_field = util.get_json_value(config_entry, 'no_sequence_if_empty_field') == True
+
         template = util.get_json_value(config_entry, 'template')
         if not isinstance(template, str):
             continue
@@ -92,9 +93,7 @@ def main():
             continue
 
         start_offset = util.get_json_value(config_entry, 'start_offset')
-        if not isinstance(start_offset, int):
-            continue
-        if start_offset < 1:
+        if not isinstance(start_offset, int) or start_offset < 1:
             start_offset = 0
 
         only_insert = util.get_json_value(config_entry, 'only_insert') == True
@@ -107,21 +106,17 @@ def main():
             'start_offset': start_offset,
             'only_insert': only_insert,
             'obj_field': obj_field,
+            'no_sequence_if_empty_field': no_sequence_if_empty_field,
             'is_linked_field': is_linked_field,
         }
 
     if objecttype_fields == {}:
         util.return_empty_objects()
 
-    # iterate over objects and check if the name must be set
-    if not isinstance(objects, list):
-        util.return_empty_objects()
-
     updated_objects = []
 
     # cache: map system object id of linked objects to search result to avoid duplicate searches
     linked_object_cache = {}
-
 
     for i in range(len(objects)):
         obj = objects[i]
@@ -138,11 +133,13 @@ def main():
 
         obj_changed = False
         for column in objecttype_fields[objecttype]:
-            template = objecttype_fields[objecttype][column]['template']
-            start_offset = objecttype_fields[objecttype][column]['start_offset']
-            only_insert = objecttype_fields[objecttype][column]['only_insert']
-            obj_field = objecttype_fields[objecttype][column]['obj_field']
-            is_linked_field = objecttype_fields[objecttype][column]['is_linked_field']
+            oc = objecttype_fields[objecttype][column]
+            template = oc['template']
+            start_offset = oc['start_offset']
+            only_insert = oc['only_insert']
+            obj_field = oc['obj_field']
+            no_sequence_if_empty_field = oc['no_sequence_if_empty_field']
+            is_linked_field = oc['is_linked_field']
 
             # skip if the object was updated but the field setting for only_insert is true
             if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
@@ -165,32 +162,38 @@ def main():
             # 3:    try to update the sequence object (protected by object version)
             # 4:    if the sequence was updated, update and return the objects, break loop
 
-
             sequence_ref = '{0}:{1}.{2}'.format(
                 PLUGIN_NAME,
                 objecttype,
                 column
             )
 
-            object_field_value = NA
+            obj_field_value = None
             if obj_field is not None:
                 if is_linked_field:
                     # check if there is a value for the linked field in this object: search for the linked object
                     sys_id = util.get_json_value(obj[objecttype], obj_field.split('.')[0] + '._system_object_id')
                     if sys_id in linked_object_cache:
-                        object_field_value = linked_object_cache[sys_id]
+                        obj_field_value = linked_object_cache[sys_id]
                     else:
                         ok, result = search.do_search(api_url, access_token, sys_id)
                         if ok:
-                            object_field_value = util.get_json_value(result, obj_field)
-                        else:
-                            util.return_error_response(util.dumpjs(result))
+                            obj_field_value = util.get_json_value(result, obj_field)
                 else:
                     # value is not in a linked object, check if it is set in the object
-                    object_field_value = util.get_json_value(obj[objecttype], obj_field)
+                    obj_field_value = util.get_json_value(obj[objecttype], obj_field)
 
-            if object_field_value is not None:
-                sequence_ref += ':{0}={1}'.format(obj_field, object_field_value)
+            if obj_field_value is None:
+                # if the obj_field is set, but no value could be found,
+                # check if the value should be kept empty or the object should be skipped completly
+                if obj_field is not None:
+                    if no_sequence_if_empty_field:
+                        continue
+
+                    obj_field_value = 'N/A'
+
+            if obj_field_value is not None:
+                sequence_ref += ':{0}={1}'.format(obj_field, obj_field_value)
 
             seq = sequence.FylrSequence(
                 api_url,
@@ -200,7 +203,6 @@ def main():
                 sequence_ref_field,
                 sequence_num_field,
                 log_in_tmp_file=False)
-
 
             do_repeat = True
             repeated = 0
@@ -231,7 +233,7 @@ def main():
                 # sequence was updated, unique sequence values can be used to update objects
                 try:
                     # replace `field` in template with object field value if it is included, else ignore
-                    template = template.replace('%field%', object_field_value)
+                    template = template.replace('%field%', obj_field_value)
                     # perform a replacement of `%d` related formats in template with the new sequence value
                     new_value = template % (start_offset + offset)
                 except TypeError as e:

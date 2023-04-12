@@ -73,11 +73,14 @@ base_config:
             type: text
             plugin_type: obj_field
             position: 4
+          - name: no_sequence_if_empty_field
+            type: bool
+            position: 5
           - name: start_offset
             default: 0
             type: int
-            position: 5
+            position: 6
           - name: only_insert
             type: bool
-            position: 6
+            position: 7
         position: 0

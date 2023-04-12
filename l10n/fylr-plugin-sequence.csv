@@ -10,10 +10,14 @@ Für jeden Objekttyp können ein oder mehrere Felder definiert werden, die vom P
 * **Vorlage für Befüllen des Feldes**
     * Geben Sie die Vorlage für den Text ein, der erzeugt werden soll.
     * Die Vorlage muss dem beschriebenen spezifischen Format entsprechen (siehe unten)
-* **Feld im Objekt, um die Sequenz zu spezifizieren**
+* **Feld im Objekt, um die Sequenz genauer zu spezifizieren**
     * optionales Feld im aktuellen Objekt, das zur Referenz der Sequenz hinzugefügt wird
     * wenn dieses Feld angegeben wird, wird pro Wert dieses Feldes eine eigene Sequenz geführt
     * damit ist es möglich verschiedene sequentielle Nummern abhängig von Feldwerten im Objekt zu setzen
+* **Objekt ignorieren, wenn der Wert im Objekt leer ist**
+    * wird nur geprüft wenn das optionale Feld, das die Sequenz genauer spezifiziert, gesetzt ist
+    * wenn aktiviert, und der Wert des Feldes im Objekt ist nicht gesetzt, wird der Wert der Sequenz im Objekt nicht gesetzt
+    * wenn nicht aktiviert, wird als Wert des Feldes `N/A` für die Sequenz genutzt
 * **Start-Offset für die Sequenz**
     * optionaler ganzzahliger Wert, der zur fortlaufenden Nummer addiert wird
 * **Feld nur befüllen, wenn das Objekt neu angelegt wird**
@@ -49,6 +53,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -84,6 +92,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -119,6 +131,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -154,6 +170,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -189,6 +209,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -224,6 +248,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -259,6 +287,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -294,6 +326,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -329,6 +365,10 @@ For each objecttype one or more fields can be defined which are checked by the p
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -359,6 +399,10 @@ server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_column.label|hint,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label,Vorlage für Befüllen des Feldes,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label,"Feld im Objekt, um die Sequenz zu spezifizieren",Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label|hint,optional,optional,optional,optional,optional,optional,optional,optional,optional,optional
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.label,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.checkbox,"Wenn das Feld für die Spezifikation der Sequenz gesetzt ist: Objekt ignorieren, wenn der Wert im Objekt leer ist",If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label,Start-Offset für die Sequenz,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label|hint,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.only_insert.label,-,-,-,-,-,-,-,-,-,-
@@ -479,5 +523,3 @@ sequence-plugin-pool.start_offset|text,Offset,Offset,Offset,Offset,Offset,Offset
 sequence-plugin-pool.objecttype|text,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
 sequence-plugin-pool.field|text,Zielfeld,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field
 sequence-plugin-pool.only_insert|text,"Feld nur befüllen, wenn das Objekt neu angelegt wird",Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label,"Feld im Objekt, um die Sequenz zu spezifizieren",Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label|hint,optional,optional,optional,optional,optional,optional,optional,optional,optional,optional
