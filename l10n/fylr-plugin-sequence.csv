@@ -10,6 +10,14 @@ Für jeden Objekttyp können ein oder mehrere Felder definiert werden, die vom P
 * **Vorlage für Befüllen des Feldes**
     * Geben Sie die Vorlage für den Text ein, der erzeugt werden soll.
     * Die Vorlage muss dem beschriebenen spezifischen Format entsprechen (siehe unten)
+* **Feld im Objekt, um die Sequenz genauer zu spezifizieren**
+    * optionales Feld im aktuellen Objekt, das zur Referenz der Sequenz hinzugefügt wird
+    * wenn dieses Feld angegeben wird, wird pro Wert dieses Feldes eine eigene Sequenz geführt
+    * damit ist es möglich verschiedene sequentielle Nummern abhängig von Feldwerten im Objekt zu setzen
+* **Objekt ignorieren, wenn der Wert im Objekt leer ist**
+    * wird nur geprüft wenn das optionale Feld, das die Sequenz genauer spezifiziert, gesetzt ist
+    * wenn aktiviert, und der Wert des Feldes im Objekt ist nicht gesetzt, wird der Wert der Sequenz im Objekt nicht gesetzt
+    * wenn nicht aktiviert, wird als Wert des Feldes `N/A` für die Sequenz genutzt
 * **Start-Offset für die Sequenz**
     * optionaler ganzzahliger Wert, der zur fortlaufenden Nummer addiert wird
 * **Feld nur befüllen, wenn das Objekt neu angelegt wird**
@@ -20,7 +28,9 @@ Für jeden Objekttyp können ein oder mehrere Felder definiert werden, die vom P
 
 Die Vorlage muss einen Platzhalter für die fortlaufende Nummer sowie ein optionales Präfix und Suffix enthalten. Der Platzhalter muss im [`printf`-Formatstil von python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) definiert sein und muss kompatibel sein, um einen Integer-Wert zu formatieren.
 
-Bitte beachten Sie, dass nur ein **einzelner, unbenannter Platzhalter** verwendet werden kann, da sonst ein interner Formatierungsfehler verursacht wird.
+Wenn ein Wert aus dem Feld zur Spezifizierung der Sequenz genutzt wird, kann dieser Wert ebenfalls in der Vorlage genutzt werden. Der Platzhalter für diesen Wert ist `%field%`.
+
+Bitte beachten Sie, dass nur ein **einzelner, unbenannter Platzhalter** für die Nummer der Sequenz verwendet werden kann, da sonst ein interner Formatierungsfehler verursacht wird.
 
 Einige Beispiele für nützliche Platzhalter innerhalb der Vorlage sind:
 
@@ -28,7 +38,8 @@ Einige Beispiele für nützliche Platzhalter innerhalb der Vorlage sind:
 |---|---|---|
 | `%d` | Einfache Zahl | `13` |
 | `%04d` | Zahl mit vier führenden Nullen | `0027` |
-| `%08x` | Hexadezimalzahl mit acht führenden Nullen | `00000BB9` |","
+| `%08x` | Hexadezimalzahl mit acht führenden Nullen | `00000BB9` |
+| `[%field%] %04d` | Wert aus dem optionalen Feld der Sequenz (z.B. `AB`) und Zahl mit vier führenden Nullen | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -38,6 +49,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -48,6 +67,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -56,7 +77,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -66,6 +88,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -76,6 +106,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -84,7 +116,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -94,6 +127,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -104,6 +145,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -112,7 +155,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -122,6 +166,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -132,6 +184,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -140,7 +194,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -150,6 +205,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -160,6 +223,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -168,7 +233,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -178,6 +244,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -188,6 +262,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -196,7 +272,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -206,6 +283,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -216,6 +301,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -224,7 +311,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -234,6 +322,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -244,6 +340,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -252,7 +350,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |","
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |","
 For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
 
 * **Objecttype**
@@ -262,6 +361,14 @@ For each objecttype one or more fields can be defined which are checked by the p
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+* **Field in object to specify the sequence**
+    * optional field in the current object to be added to the sequence reference.
+    * if this field is specified, a separate sequence is kept per value of this field
+    * this makes it possible to set different sequential numbers depending on field values in the object
+* **Ignore object if the value in the object is empty**.
+    * is checked only if the optional field that specifies the sequence more precisely is set.
+    * if enabled, and the value of the field in the object is not set, the value of the sequence in the object is not set
+    * if not activated, the value of the field 'N/A' is used for the sequence
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
 * **Only fill this field if a new object is inserted**
@@ -272,6 +379,8 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
+If a value from the field is used to specify the sequence, this value can also be used in the template. The placeholder for this value is `%field%`.
+
 Please keep in mind, that only a **single, unnamed placeholder** can be used, otherwise an internal formatting error will be caused.
 
 Some examples for useful placeholders inside the template are:
@@ -280,7 +389,8 @@ Some examples for useful placeholders inside the template are:
 |---|---|---|
 | `%d` | Simple number | `13` |
 | `%04d` | Number with four leading zeros | `0027` |
-| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |"
+| `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
+| `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |"
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.label,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.label|hint,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_objecttype.label,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
@@ -289,6 +399,10 @@ server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_column.label|hint,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label,Vorlage für Befüllen des Feldes,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label,"Feld im Objekt, um die Sequenz zu spezifizieren",Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label|hint,optional,optional,optional,optional,optional,optional,optional,optional,optional,optional
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.label,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.checkbox,"Wenn das Feld für die Spezifikation der Sequenz gesetzt ist: Objekt ignorieren, wenn der Wert im Objekt leer ist",If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label,Start-Offset für die Sequenz,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label|hint,-,-,-,-,-,-,-,-,-,-
 server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.only_insert.label,-,-,-,-,-,-,-,-,-,-
