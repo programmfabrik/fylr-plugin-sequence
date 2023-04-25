@@ -7,13 +7,14 @@ import fylr_lib_plugin_python3.util as util
 import sequence
 import search
 import json
+import pool
+import templates
 
 
 PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
-@util.handle_exceptions
-def main():
+if __name__ == '__main__':
 
     orig_data = json.loads(sys.stdin.read())
 
@@ -39,6 +40,20 @@ def main():
     # directly return the original data if there are any configurations missing
     main_config_path = 'info.config.plugin.' + PLUGIN_NAME + '.config.' + PLUGIN_NAME + '\.insert_sequence\.'
 
+    # load ordered list of database languages
+    database_languages = []
+    langs = util.get_json_value(orig_data, 'info.config.system.config.languages.database')
+    if isinstance(langs, list):
+        for l in langs:
+            v = util.get_json_value(l, 'value')
+            if v is None:
+                continue
+            if len(v) < 1:
+                continue
+            database_languages.append(v)
+    if len(database_languages) < 1:
+        database_languages.append('en-US')
+
     # sequence objecttype settings
     config_path = main_config_path + 'sequence.'
 
@@ -59,6 +74,9 @@ def main():
 
     objecttype_fields = {}
     for config_entry in ot_settings:
+        if not util.get_json_value(config_entry, 'enabled'):
+            continue
+
         objecttype = util.get_json_value(config_entry, 'update_objecttype')
         if not isinstance(objecttype, str):
             continue
@@ -110,8 +128,41 @@ def main():
             'is_linked_field': is_linked_field,
         }
 
-    if objecttype_fields == {}:
-        util.return_empty_objects()
+    # iterate over the objects, collect the pool id(s) to load the pool configuration
+    pool_ids = set()
+    for i in range(len(objects)):
+        obj = objects[i]
+        if not isinstance(obj, dict):
+            continue
+
+        objecttype = util.get_json_value(obj, '_objecttype')
+        if not isinstance(objecttype, str):
+            continue
+
+        pool_id = util.get_json_value(obj, '{0}._pool.pool._id'.format(objecttype))
+        if isinstance(pool_id, int):
+            pool_ids.add(pool_id)
+
+    # load pools (and parents)
+    # collect template configurations for objecttypes
+    pool_info = {}
+    pool_customdata = {}
+    if len(pool_ids) > 0:
+        pool_info, pool_customdata = pool.load_pool_data(
+            api_url,
+            access_token,
+            pool_ids
+        )
+
+    templates_manager = templates.TemplatesManager(
+        pool_info,
+        api_url,
+        access_token,
+        sequence_objecttype,
+        sequence_ref_field,
+        sequence_num_field,
+        database_languages
+    )
 
     updated_objects = []
 
@@ -124,16 +175,24 @@ def main():
         if not isinstance(obj, dict):
             continue
 
+        # skip objects that are not configured in the base config and that are not in a pool
         objecttype = util.get_json_value(obj, '_objecttype')
-        if objecttype not in objecttype_fields:
+        pool_id = util.get_json_value(obj, '{0}._pool.pool._id'.format(objecttype))
+        if objecttype not in objecttype_fields and pool_id is None:
             # another objecttype was inserted, nothing to do here
             continue
 
-        # iterate over the templates for different fields, check if the fields need to be updated
+        version = util.get_json_value(obj, '{0}._version'.format(objecttype))
 
+        # iterate over the templates for different fields which are defined in the base configuration
+        # check if the fields need to be updated
         obj_changed = False
-        for column in objecttype_fields[objecttype]:
-            oc = objecttype_fields[objecttype][column]
+        column_templates = util.get_json_value(objecttype_fields, objecttype)
+        if column_templates is None:
+            column_templates = {}
+
+        for column in column_templates:
+            oc = column_templates[column]
             template = oc['template']
             start_offset = oc['start_offset']
             only_insert = oc['only_insert']
@@ -171,14 +230,27 @@ def main():
             obj_field_value = None
             if obj_field is not None:
                 if is_linked_field:
-                    # check if there is a value for the linked field in this object: search for the linked object
-                    sys_id = util.get_json_value(obj[objecttype], obj_field.split('.')[0] + '._system_object_id')
-                    if sys_id in linked_object_cache:
-                        obj_field_value = linked_object_cache[sys_id]
+
+                    path_to_linked_field = obj_field.split('.')
+                    sys_id = None
+
+                    if path_to_linked_field[0].startswith('_nested:'):
+                        # if the linked object is inside a nested table, use the first entry if possible
+                        nested = util.get_json_value(obj[objecttype], path_to_linked_field[0])
+                        if isinstance(nested, list) and len(nested) > 0:
+                            sys_id = util.get_json_value(nested[0], '.'.join(path_to_linked_field[1:-1]) + '._system_object_id')
                     else:
-                        ok, result = search.do_search(api_url, access_token, sys_id)
-                        if ok:
-                            obj_field_value = util.get_json_value(result, obj_field)
+                        # check if there is a value for the linked field in this object: search for the linked object
+                        sys_id = util.get_json_value(obj[objecttype], path_to_linked_field[0] + '._system_object_id')
+
+                    if sys_id is not None:
+                        if sys_id in linked_object_cache:
+                            obj_field_value = linked_object_cache[sys_id]
+                        else:
+                            ok, result = search.do_search(api_url, access_token, sys_id)
+                            if ok:
+                                link_ot = util.get_json_value(result, '_objecttype')
+                                obj_field_value = util.get_json_value(result, link_ot + '.' + path_to_linked_field[-1])
                 else:
                     # value is not in a linked object, check if it is set in the object
                     obj_field_value = util.get_json_value(obj[objecttype], obj_field)
@@ -233,7 +305,8 @@ def main():
                 # sequence was updated, unique sequence values can be used to update objects
                 try:
                     # replace `field` in template with object field value if it is included, else ignore
-                    template = template.replace('%field%', obj_field_value)
+                    if obj_field_value is not None and '%field%' in template:
+                        template = template.replace('%field%', obj_field_value)
                     # perform a replacement of `%d` related formats in template with the new sequence value
                     new_value = template % (start_offset + offset)
                 except TypeError as e:
@@ -245,6 +318,45 @@ def main():
                 obj[objecttype][column] = new_value
                 obj_changed = True
 
+        # check if the object is in a pool and if this pool has (inherited) custom data template settings
+        if pool_id in pool_customdata:
+            settings = util.get_json_value(pool_customdata[pool_id], objecttype)
+            if isinstance(settings, dict):
+                for field in settings.keys():
+                    # skip entries that are not fields but additional info for fields
+                    skip = False
+                    for suffix in [
+                        'start_offset',
+                        'only_insert',
+                    ]:
+                        if field.endswith(':{0}'.format(suffix)):
+                            skip = True
+                            break
+                    if skip:
+                        continue
+
+                    # if the template should only be applied when the object is inserted, check if the object has version 1
+                    if util.get_json_value(settings, '{0}:only_insert'.format(field)) == True:
+                        if version != 1:
+                            continue
+
+                    # do not override if the field already has a value
+                    field_value = util.get_json_value(obj, '{0}.{1}'.format(objecttype, field))
+                    if field_value not in [None, '']:
+                        continue
+
+                    new_value = templates_manager.apply(
+                        settings,
+                        objecttype,
+                        field,
+                        pool_id
+                    )
+                    if new_value is None:
+                        continue
+
+                    obj[objecttype][field] = new_value
+                    obj_changed = True
+
         if obj_changed:
             updated_objects.append(obj)
 
@@ -252,7 +364,3 @@ def main():
     util.return_response({
         'objects': updated_objects
     })
-
-
-if __name__ == '__main__':
-    main()

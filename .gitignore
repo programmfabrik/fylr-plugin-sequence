@@ -7,5 +7,6 @@ build-stamp-l10n
 *.txt
 *.zip
 *.pyc
+__pycache__
 
 build-info.json

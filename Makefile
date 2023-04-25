@@ -33,6 +33,9 @@ code: $(JS) ## build Coffeescript code
 
 clean: ## clean build files
 	rm -f src/server/*.pyc
+	rm -rf src/server/__pycache__/
+	rm -f src/server/fylr_lib_plugin_python3/*.pyc
+	rm -rf src/server/fylr_lib_plugin_python3/__pycache__/
 	rm -f src/webfrontend/*.coffee.js
 	rm -f $(JS)
 	rm -rf $(BUILD_DIR)
