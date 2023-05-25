@@ -1,0 +1,54 @@
+{
+    "name": "POST /api/v1/user testuser",
+    "request": {
+        "body": [
+            {
+                "_basetype": "user",
+                "_password": "testuser",
+                "_system_rights": {
+                    "system.frontend_features": {
+                        "acl_manager": [],
+                        "asset_browser_metadata_tool": false,
+                        "changelog": false,
+                        "collection": [],
+                        "collection_presentation": false,
+                        "csv_importer": false,
+                        "deep_link_sharing": false,
+                        "download": false,
+                        "editor_bulk": false,
+                        "editor_bulk_delete": false,
+                        "export": false,
+                        "json_importer": false,
+                        "metadata_export": null,
+                        "metadata_upload": null,
+                        "print": false,
+                        "script_runner": false,
+                        "show_system_tags": false,
+                        "stored_searches": false
+                    },
+                    "system.search": {
+                        "has_own_collections": false,
+                        "show_fixed_searches": false
+                    }
+                },
+                "user": {
+                    "_id": null,
+                    "_version": 1,
+                    "frontend_language": "en-US",
+                    "login": "testuser",
+                    "reference": "testuser",
+                    "require_password_change": false,
+                    "type": "easydb"
+                }
+            }
+        ],
+        "endpoint": "user",
+        "method": "POST"
+    },
+    "response": {
+        "statuscode": 200
+    },
+    "store_response_qjson": {
+        "testuser_id": "body.0.user._id"
+    }
+}

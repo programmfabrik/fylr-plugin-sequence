@@ -8,4 +8,9 @@
     ,"@post_config.json"
     ,"@POST_datamodel_commit.json"
     ,"@plugin_init.json"
+    {{ if not (datastore `as_root`) }}
+        ,"@create_testuser.json"
+        ,"@update_objecttype_permissions.json"
+        ,"@testuser_session.json"
+    {{ end }}
 ]

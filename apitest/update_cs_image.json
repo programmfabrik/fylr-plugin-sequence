@@ -5,7 +5,7 @@
             "request": {
                 "body": [
                     {
-                        "_mask": "_all_fields",
+                        "_mask": "cs_image__all_fields",
                         "_objecttype": "cs_image",
                         "cs_image": {
                             "_id": {{ $idx | printf "cs_image_id_%d" | datastore }},

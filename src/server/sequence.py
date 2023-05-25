@@ -75,6 +75,9 @@ class FylrSequence(object):
 
         self.sequence_objecttype = sequence_objecttype
 
+        # get the standard mask for the sequence objecttype (necessary since _all_fields can only be used by root)
+        self.mask = self.get_sequence_objecttype_mask()
+
         if sequence_ref_field.startswith(sequence_objecttype + '.'):
             sequence_ref_field = sequence_ref_field[len(sequence_objecttype) + 1:]
         self.sequence_ref_field = sequence_ref_field
@@ -96,7 +99,7 @@ class FylrSequence(object):
 
     @util.handle_exceptions
     def get_next_number(self) -> int:
-        path = 'db/' + self.sequence_objecttype + '/_all_fields/list'
+        path = 'db/{0}/{1}/list'.format(self.sequence_objecttype, self.mask)
         api_resp, statuscode = self.get_from_api(path)
 
         if statuscode != 200:
@@ -152,7 +155,7 @@ class FylrSequence(object):
 
         new_obj = {
             '_objecttype': self.sequence_objecttype,
-            '_mask': '_all_fields',
+            '_mask': self.mask if self.mask is not None else '_all_fields',
             self.sequence_objecttype: {
                 '_id': self.obj_id,
                 '_version': 1 if self.obj_id is None else self.version + 1,
@@ -166,7 +169,7 @@ class FylrSequence(object):
             util.dumpjs([new_obj])
         )
 
-        # determine if the caller should try to repeate a failed update or give up
+        # determine if the caller should try to repeat a failed update or give up
 
         if statuscode == 200:
             # everything ok
@@ -192,3 +195,32 @@ class FylrSequence(object):
             error['response'] = error_resp
 
             return False, error
+
+    @util.handle_exceptions
+    def get_sequence_objecttype_mask(self):
+        resp, statuscode = self.get_from_api('mask/CURRENT')
+
+        if statuscode != 200:
+            raise Exception('could not get /api/v1/mask/CURRENT: statuscode {0}, response: {1}'.format(statuscode, resp))
+
+        content = json.loads(resp)
+        masks = util.get_json_value(content, 'masks')
+        if not isinstance(masks, list):
+            raise Exception('could not get masks from /api/v1/mask/CURRENT: response: {0}'.format(resp))
+
+        for mask in masks:
+            table_name = util.get_json_value(mask, 'table_name_hint')
+            if table_name != self.sequence_objecttype:
+                continue
+
+            is_preferred = util.get_json_value(mask, 'is_preferred')
+            if not isinstance(is_preferred, bool) or not is_preferred:
+                continue
+
+            mask_name = util.get_json_value(mask, 'name')
+            if not isinstance(mask_name, str) or len(mask_name) < 1:
+                continue
+
+            return mask_name
+
+        raise Exception('could not find standard mask for objecttype {0} from /api/v1/mask/CURRENT'.format(self.sequence_objecttype))

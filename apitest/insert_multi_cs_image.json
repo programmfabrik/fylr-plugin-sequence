@@ -6,7 +6,7 @@
                 {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
                     {{ if gt $idx 0 }}, {{ end }}
                     {
-                        "_mask": "_all_fields",
+                        "_mask": "cs_image__all_fields",
                         "_objecttype": "cs_image",
                         "cs_image": {
                             "_version": 1,

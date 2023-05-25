@@ -1,0 +1,139 @@
+{
+    "name": "POST /api/v1/objecttype",
+    "request": {
+        "body": [
+            // update necessary objecttypes with minimal permissions for testuser
+            {
+                "_basetype": "objecttype",
+                "objecttype": {
+                    "_id": 2,
+                    "_version": 2,
+                    "name": "cs_image",
+                    "mapping_image_export": "none",
+                    "mapping_image_import": "none",
+                    "mapping_dc_export": "none",
+                    "show_in_collections": false,
+                    "show_in_facet_grouping": false,
+                    "show_in_main_menu_with_icon": "",
+                    "description": {},
+                    "custom_data": {}
+                },
+                "_standard_masks": null,
+                "_export_asset_filenames": {},
+                "_acl": [
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "asset_upload": {
+                                "_grantable": false,
+                                "allow_update_and_remove": false,
+                                "classes": [
+                                    "image"
+                                ],
+                                "limit": "0B",
+                                "column_ids": [
+                                    11
+                                ]
+                            },
+                            "create": {},
+                            "delete": {
+                                "_grantable": false
+                            },
+                            "mask": {
+                                "mask_ids": {
+                                    "2": [
+                                        "standard",
+                                        5
+                                    ]
+                                }
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    }
+                ],
+                "_private_transitions": false,
+                "_transitions": [],
+                "_private_tags": null,
+                "_tags": null,
+                "_maskfilters": {},
+                "_columnfilters": [],
+                "_filename_replacements": {
+                    "cs_image.easfile_id": []
+                }
+            },
+            {
+                "_basetype": "objecttype",
+                "objecttype": {
+                    "_id": 248,
+                    "_version": 2,
+                    "name": "sequence",
+                    "mapping_image_export": "none",
+                    "mapping_image_import": "none",
+                    "mapping_dc_export": "none",
+                    "show_in_collections": false,
+                    "show_in_facet_grouping": false,
+                    "description": {},
+                    "custom_data": {}
+                },
+                "_standard_masks": null,
+                "_export_asset_filenames": {},
+                "_acl": [
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "create": {},
+                            "mask": {
+                                "mask_ids": {
+                                    "248": [
+                                        "standard",
+                                        72
+                                    ]
+                                }
+                            },
+                            "write": {
+                                "_grantable": false
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    }
+                ],
+                "_private_transitions": false,
+                "_transitions": [],
+                "_private_tags": null,
+                "_tags": null,
+                "_maskfilters": {},
+                "_columnfilters": [],
+                "_filename_replacements": {}
+            }
+        ],
+        "endpoint": "objecttype",
+        "method": "POST"
+    },
+    "response": {
+        "statuscode": 200
+    }
+}
