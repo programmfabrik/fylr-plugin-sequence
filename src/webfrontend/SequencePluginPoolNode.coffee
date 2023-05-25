@@ -48,7 +48,7 @@ class SequencePluginPoolNode extends ListViewEditTreeNode
 				data = df.getData()
 				fieldSelector = new ez5.FieldSelector
 					objecttype_data_key: "objecttype"
-					store_value: "name"
+					store_value: "fullname"
 					name: "field"
 					data: data
 					show_name: true

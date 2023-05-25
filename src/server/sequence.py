@@ -5,7 +5,7 @@ import json
 import time
 
 
-def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequence_objecttype, sequence_ref_field, sequence_num_field, log_in_tmp_file=False):
+def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequence_objecttype, sequence_ref_field, sequence_num_field, pool_id=None,log_in_tmp_file=False):
 
     # repeat:
     # 1:    get the next number of the sequence (from an existing object, or 1 if the sequence has not been used yet)
@@ -13,9 +13,14 @@ def get_next_offset(plugin_name, api_url, access_token, objecttype, column, sequ
     # 3:    try to update the sequence object (protected by object version)
     # 4:    if the sequence was updated, update and return the objects, break loop
 
+    if pool_id is None:
+        sequence_ref = '{0}:{1}.{2}'.format(plugin_name, objecttype, column)
+    else:
+        sequence_ref = '{0}:poolid={1}:{2}.{3}'.format(plugin_name, pool_id, objecttype, column)
+
     seq = FylrSequence(
         api_url,
-        '{0}:{1}.{2}'.format(plugin_name, objecttype, column),
+        sequence_ref,
         access_token,
         sequence_objecttype,
         sequence_ref_field,

@@ -95,6 +95,8 @@ class TemplatesManager(object):
             return None
 
         template = util.get_json_value(settings, field)
+        if not isinstance(template, str):
+            return None
         for k in self.pool_mappings[pool_id]:
             template = template.replace('%{0}%'.format(k), self.pool_mappings[pool_id][k])
 
@@ -118,7 +120,8 @@ class TemplatesManager(object):
             field,
             self.sequence_objecttype,
             self.sequence_ref_field,
-            self.sequence_num_field
+            self.sequence_num_field,
+            pool_id=pool_id
         )
         if sequence_offset is not None:
             template = template.replace('%n%', str(start_offset + sequence_offset))

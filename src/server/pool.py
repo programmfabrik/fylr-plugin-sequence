@@ -127,6 +127,9 @@ def load_pool_data(api_url, access_token, pool_ids):
                 if field == '':
                     continue
 
+                if field.startswith(objecttype + '.'):
+                    field = field[len(objecttype) + 1:]
+
                 template = util.get_json_value(e, 'template')
                 if not isinstance(template, str):
                     continue

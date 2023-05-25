@@ -221,19 +221,11 @@ if __name__ == '__main__':
             # 3:    try to update the sequence object (protected by object version)
             # 4:    if the sequence was updated, update and return the objects, break loop
 
-            if pool_id is None:
-                sequence_ref = '{0}:{1}.{2}'.format(
-                    PLUGIN_NAME,
-                    objecttype,
-                    column
-                )
-            else:
-                sequence_ref = '{0}:poolid={1}:{2}.{3}'.format(
-                    PLUGIN_NAME,
-                    pool_id,
-                    objecttype,
-                    column
-                )
+            sequence_ref = '{0}:{1}.{2}'.format(
+                PLUGIN_NAME,
+                objecttype,
+                column
+            )
 
             obj_field_value = None
             if obj_field is not None:
