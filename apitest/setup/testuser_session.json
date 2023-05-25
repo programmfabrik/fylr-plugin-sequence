@@ -1,5 +1,5 @@
 [
-    {{ $accessToken := oauth2_password_token "web-client" "testuser" "testuser" | marshal | qjson "access_token" | unmarshal }}
+    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "testuser" "testuser" | marshal | qjson "access_token" | unmarshal }}
     {
         "name": "GET /session for \"testuser\"",
         "request": {
