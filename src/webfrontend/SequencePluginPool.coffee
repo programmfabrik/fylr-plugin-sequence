@@ -45,10 +45,7 @@ class ez5.SequencePluginPool extends ez5.PoolPlugin
 				ui: "tag.form.remove.button"
 				group: "plus-minus"
 				onClick: =>
-					@tree.getSelectedNode()?.remove(false, false)
-					CUI.Events.trigger
-						type: "data-changed"
-						node: @tree
+					@removeSequenceNode()
 			]
 
 		@tree.render()
@@ -69,6 +66,21 @@ class ez5.SequencePluginPool extends ez5.PoolPlugin
 		@data.push(sequenceData)
 		sequence = new SequencePluginPoolNode(data: sequenceData)
 		@tree.addNode(sequence)
+		CUI.Events.trigger
+			type: "data-changed"
+			node: @tree
+
+	removeSequenceNode: ->
+		selectedNode = @tree.getSelectedNode()
+		if not selectedNode
+			return
+
+		selectedNode.remove(false, false)
+		updatedData = []
+		for node in @tree.nodes
+			updatedData.push(node.getData())
+		@data = updatedData
+
 		CUI.Events.trigger
 			type: "data-changed"
 			node: @tree
