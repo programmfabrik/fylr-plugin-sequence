@@ -40,11 +40,15 @@ if __name__ == '__main__':
     # directly return the original data if there are any configurations missing
     main_config_path = 'info.config.plugin.' + PLUGIN_NAME + '.config.' + PLUGIN_NAME + '\.insert_sequence\.'
 
-    # load ordered list of database languages
+    # load ordered list of database languages from the base config (api/v1/config/system)
     database_languages = []
-    langs = util.get_json_value(orig_data, 'info.config.system.config.languages.database')
-    if isinstance(langs, list):
-        for l in langs:
+    config_languages = util.get_config_from_api(
+        api_url=api_url,
+        access_token=access_token,
+        path='system/config/languages/database',
+    )
+    if isinstance(config_languages, list):
+        for l in config_languages:
             v = util.get_json_value(l, 'value')
             if v is None:
                 continue
