@@ -20,7 +20,7 @@ help:
 google-csv: ## get loca CSV from google
 	curl --silent -L -o - "$(GOOGLE_URL)$(GID_LOCA)" | tr -d "\r" > $(L10N)
 
-all: google-csv build ## pull CSV & build
+all: build ## build all
 
 build: clean code ## build all (creates build folder)
 	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)
