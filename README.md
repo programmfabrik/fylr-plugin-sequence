@@ -13,6 +13,7 @@ To store the current value of different sequences, this plugin uses a specialize
 * **integer** field:
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 ## Base Configuration
 
@@ -58,11 +59,11 @@ Please keep in mind, that only a **single, unnamed placeholder** can be used, ot
 
 Some examples for useful placeholders inside the template are:
 
-| Template | Description | Example |
-|---|---|---|
-| `%d` | Simple number | `13` |
-| `%04d` | Number with four trailing zeros | `0027` |
-| `%08x` | Hexadecimal number with eight trailing zeros | `00000BB9` |
+| Template         | Description                                                                                  | Example     |
+|------------------|----------------------------------------------------------------------------------------------|-------------|
+| `%d`             | Simple number                                                                                | `13`        |
+| `%04d`           | Number with four trailing zeros                                                              | `0027`      |
+| `%08x`           | Hexadecimal number with eight trailing zeros                                                 | `00000BB9`  |
 | `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |
 
 
@@ -76,13 +77,13 @@ The pool settings are inherited from parent pools. This means, if there is a tem
 
 For each pool, under the tab "Sequnce", a list of templates can be configured. Each row in the list has the following settings:
 
-| Setting | Description | Type | Mandatory |
-|---|---|---|---|
-| Template | Template for field content which is applied | Text | Yes |
-| Offset | If a sequential number is used in the template (`"%n%"`): an optional offset that is added to the sequential number | Number | No (defaults to `0`) |
-| Objecttype | The objecttype to which the template is applied (only pool managed objecttypes can be selected) | Select | Yes |
-| Target Field | The field in the selected objecttype which is filled with the template (only text fields can be selected) | Select | Yes |
-| Only fill this field if a new object is inserted | Enable this checkbox if the template should only be applied to the field, if a new object is inserted. Disable it, if the template should also be applied if an existing object is updated | Bool | Yes |
+| Setting                                          | Description                                                                                                                                                                                | Type   | Mandatory            |
+|--------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|----------------------|
+| Template                                         | Template for field content which is applied                                                                                                                                                | Text   | Yes                  |
+| Offset                                           | If a sequential number is used in the template (`"%n%"`): an optional offset that is added to the sequential number                                                                        | Number | No (defaults to `0`) |
+| Objecttype                                       | The objecttype to which the template is applied (only pool managed objecttypes can be selected)                                                                                            | Select | Yes                  |
+| Target Field                                     | The field in the selected objecttype which is filled with the template (only text fields can be selected)                                                                                  | Select | Yes                  |
+| Only fill this field if a new object is inserted | Enable this checkbox if the template should only be applied to the field, if a new object is inserted. Disable it, if the template should also be applied if an existing object is updated | Bool   | Yes                  |
 
 For each row in the configured list, the template is applied if the field in the object is empty. If multiple templates are defined for the same objecttype and field, only the last template is applied.
 
@@ -92,21 +93,21 @@ The following placeholders can be combined with free text. When the template is 
 
 The sequence placeholder `"%n%"` is replaced by the next number of the sequence for the specified objecttype and field. The placeholder can be used multiple times in the template and each occurrence will be replaced by the same number.
 
-| Placeholder | Description | Type |
-|---|---|---|
-| `%pool.id%` | ID of the pool | Number |
-| `%pool.reference%` | Reference of the pool | Text |
-| `%pool.shortname%` | Shortname of the pool | Text |
-| `%pool.level%` | Level of the pool in the hierarchy (root pool: level `1`) | Number |
-| `%pool.name%` | Name of the pool. The name is selected in the first database language which is configured in the base configuration | Multilanguage Text |
-| `%pool.name:<lang>%` | Name of the pool in the specified language. `<lang>` needs to be replaced with the language code | Multilanguage Text |
-| `%pool.parent.id%` | ID of the parent pool | Number |
-| `%pool.parent.reference%` | Reference of the parent pool | Text |
-| `%pool.parent.shortname%` | Shortname of the parent pool | Text |
-| `%pool.parent.level%` | Level of the parent pool | Number |
-| `%pool.parent.name%` | Name of the parent pool in the first database language | Multilanguage Text |
-| `%pool.parent.name:<lang>%` | Name of the parent pool in the specified language | Multilanguage Text |
-| `%n%` | Next sequential number for the specified objecttype and field | Number |
+| Placeholder                 | Description                                                                                                         | Type               |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------|--------------------|
+| `%pool.id%`                 | ID of the pool                                                                                                      | Number             |
+| `%pool.reference%`          | Reference of the pool                                                                                               | Text               |
+| `%pool.shortname%`          | Shortname of the pool                                                                                               | Text               |
+| `%pool.level%`              | Level of the pool in the hierarchy (root pool: level `1`)                                                           | Number             |
+| `%pool.name%`               | Name of the pool. The name is selected in the first database language which is configured in the base configuration | Multilanguage Text |
+| `%pool.name:<lang>%`        | Name of the pool in the specified language. `<lang>` needs to be replaced with the language code                    | Multilanguage Text |
+| `%pool.parent.id%`          | ID of the parent pool                                                                                               | Number             |
+| `%pool.parent.reference%`   | Reference of the parent pool                                                                                        | Text               |
+| `%pool.parent.shortname%`   | Shortname of the parent pool                                                                                        | Text               |
+| `%pool.parent.level%`       | Level of the parent pool                                                                                            | Number             |
+| `%pool.parent.name%`        | Name of the parent pool in the first database language                                                              | Multilanguage Text |
+| `%pool.parent.name:<lang>%` | Name of the parent pool in the specified language                                                                   | Multilanguage Text |
+| `%n%`                       | Next sequential number for the specified objecttype and field                                                       | Number             |
 
 ### Examples
 
@@ -135,7 +136,7 @@ The plugin determines how many numbers of the sequence it will use, and update t
 
 ### Constructor
 
-```!python
+```python
 seq = sequence.FylrSequence(
     api_url,
     ref,
@@ -148,16 +149,18 @@ seq = sequence.FylrSequence(
 
 All **parameters** are of the type `str`:
 
-- `api_url`: complete server (fylr) url including the `/api/v1` path
-- `ref`: unique name (reference) of the sequence
-- `access_token`: OAuth2 access token for the fylr api
-- `sequence_objecttype`: objecttype that stores the sequence(s)
-- `sequence_ref_field`: name of the field that stores the reference
-- `sequence_num_field`: name of the field that stores the number
+| Parameter             | Description                                             |
+|-----------------------|---------------------------------------------------------|
+| `api_url`             | complete server (fylr) url including the `/api/v1` path |
+| `ref`                 | unique name (reference) of the sequence                 |
+| `access_token`        | OAuth2 access token for the fylr api                    |
+| `sequence_objecttype` | objecttype that stores the sequence(s)                  |
+| `sequence_ref_field`  | name of the field that stores the reference             |
+| `sequence_num_field`  | name of the field that stores the number                |
 
 ### Getting the next free sequence number
 
-```'!python
+```python
 number = seq.get_next_number()
 ```
 
@@ -167,7 +170,7 @@ If an object with the reference `ref` exists, this method returns the next free 
 
 This method should be called before any fylr objects are actually updated. If this method returns no error, it means that the sequence object was successfully updated. The new number should be calculated by adding the number of needed sequence values to the current value. The
 
-```'!python
+```python
 update_ok, error = seq.update(number)
 ```
 
@@ -192,7 +195,7 @@ The combination of the two return values is an indicator how the plugin should p
 **Errors**:
 
 - if the number for the update is invalid (less or equal the current number), the error will be an object with the following content:
-    ```!python
+    ```python
     {
         'current_number': <?>,
         'new_number': <?>
@@ -201,7 +204,7 @@ The combination of the two return values is an indicator how the plugin should p
     - in this case, the plugin should calculate a new valid sequence number and repeat the update process
 
 - if there were any server errors during the update, the error will include the statuscode and the content of the response:
-    ```!python
+    ```python
     {
         'url': '<?>',
         'statuscode': <?>,
