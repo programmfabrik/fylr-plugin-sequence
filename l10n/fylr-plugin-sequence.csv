@@ -1,6 +1,6 @@
 key,de-DE,en-US,da-DK,fi-FI,sv-SE,es-ES,it-IT,ru-RU,cs-CZ,pl-PL
-server.config.name.system.fylr-plugin-sequence.insert_sequence.objecttypes,"Einstellungen für Objekttypen und Felder, die automatisch befüllt werden","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically"
-server.config.name.system.fylr-plugin-sequence.insert_sequence.objecttypes|hint,"
+server.config.name.system.objecttypes,"Einstellungen für Objekttypen und Felder, die automatisch befüllt werden","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically","Settings for the objecttypes and fields, which are filled automatically"
+server.config.name.system.objecttypes|hint,"
 Für jeden Objekttyp können ein oder mehrere Felder definiert werden, die vom Plugin daraufhin überprüft werden, ob sie leer sind. In diesem Fall verwendet das Plugin die Vorlage, um einen String zu formatieren, der die fortlaufende Nummer enthält. Die ausgewählten Felder müssen Textfelder sein.
 
 * **Objekttyp**
@@ -391,32 +391,33 @@ Some examples for useful placeholders inside the template are:
 | `%04d` | Number with four leading zeros | `0027` |
 | `%08x` | Hexadecimal number with eight leading zeros | `00000BB9` |
 | `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |"
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.label,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_objecttype.label,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_objecttype.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_column.label,Textfeld,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_column.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label,Vorlage für Befüllen des Feldes,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.template.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label,"Feld im Objekt, um die Sequenz zu spezifizieren",Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label|hint,optional,optional,optional,optional,optional,optional,optional,optional,optional,optional
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.label,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.no_sequence_if_empty_field.checkbox,"Wenn das Feld für die Spezifikation der Sequenz gesetzt ist: Objekt ignorieren, wenn der Wert im Objekt leer ist",If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label,Start-Offset für die Sequenz,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.start_offset.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.only_insert.label,-,-,-,-,-,-,-,-,-,-
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.only_insert.checkbox,"Feld nur befüllen, wenn das Objekt neu angelegt wird",Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence,Einstellungen für Objekttyp zum Speichern der fortlaufenden Nummern (Sequenz),Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence|hint,"Um den aktuellen Wert der verschiedenen Sequenzen zu speichern, verwendet dieses Plugin einen speziellen Objekttyp. Dieser Objekttyp **muss dem Datenmodell hinzugefügt werden** und muss die folgenden Anforderungen erfüllen:
+server.config.parameter.system.objecttypes.sequence_settings.label,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.objecttype_settings.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.update_objecttype.label,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
+server.config.parameter.system.objecttypes.sequence_settings.update_objecttype.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.update_column.label,Textfeld,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field,Text Field
+server.config.parameter.system.objecttypes.sequence_settings.update_column.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.template.label,Vorlage für Befüllen des Feldes,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content
+server.config.parameter.system.objecttypes.sequence_settings.template.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.obj_field.label,"Feld im Objekt, um die Sequenz zu spezifizieren",Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence,Field in object to specify the sequence
+server.config.parameter.system.objecttypes.sequence_settings.obj_field.label|hint,optional,optional,optional,optional,optional,optional,optional,optional,optional,optional
+server.config.parameter.system.objecttypes.sequence_settings.no_sequence_if_empty_field.label,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.no_sequence_if_empty_field.checkbox,"Wenn das Feld für die Spezifikation der Sequenz gesetzt ist: Objekt ignorieren, wenn der Wert im Objekt leer ist",If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty,If the field for the specification of the sequence is set: ignore object if the value in the object is empty
+server.config.parameter.system.objecttypes.sequence_settings.start_offset.label,Start-Offset für die Sequenz,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence,Start offset of the sequence
+server.config.parameter.system.objecttypes.sequence_settings.start_offset.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.only_insert.label,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.only_insert.checkbox,"Feld nur befüllen, wenn das Objekt neu angelegt wird",Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted
+server.config.name.system.sequence,Einstellungen für Objekttyp zum Speichern der fortlaufenden Nummern (Sequenz),Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers,Settings for the objecttype to store sequential numbers
+server.config.name.system.sequence|hint,"Um den aktuellen Wert der verschiedenen Sequenzen zu speichern, verwendet dieses Plugin einen speziellen Objekttyp. Dieser Objekttyp **muss dem Datenmodell hinzugefügt werden** und muss die folgenden Anforderungen erfüllen:
 
 * **Referenzfeld**: Textfeld
     * dieses Feld speichert einen **(eindeutigen) Bezeichner**, damit die Sequenz durch diese **Referenz** identifiziert werden kann
-    * es sollte eine ""NICHT NULL""-Einschränkung haben, so dass kein Sequenzobjekt ohne Referenz existieren kann
-    * es sollte eine ""UNIQUE""-Einschränkung haben, so dass jede Sequenz identifiziert werden kann (das Plugin verwendet das erste Objekt, das passt)
+    * es sollte eine `NICHT NULL`-Einschränkung haben, so dass kein Sequenzobjekt ohne Referenz existieren kann
+    * es sollte eine `UNIQUE`-Einschränkung haben, so dass jede Sequenz identifiziert werden kann (das Plugin verwendet das erste Objekt, das passt)
 * **Nummernfeld**: Ganzzahliges Feld
     * dieses Feld speichert die zuletzt verwendete **Sequenznummer**
-    * es sollte eine ""NICHT NULL""-Einschränkung haben, so dass kein Sequenzobjekt ohne Nummer existieren kann
+    * es sollte eine `NICHT NULL`-Einschränkung haben, so dass kein Sequenzobjekt ohne Nummer existieren kann
+    * es darf **keine** `UNIQUE`-Einschränkung haben, da die Sequenznummer sonst mit anderen unabhängigen Sequenzen kollidieren könnte
 
 Das Plugin prüft diese Anforderungen nicht, sondern geht davon aus, dass dieser Objekttyp im Datenmodell korrekt konfiguriert ist","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -427,6 +428,7 @@ Das Plugin prüft diese Anforderungen nicht, sondern geht davon aus, dass dieser
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -437,6 +439,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -447,6 +450,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -457,6 +461,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -467,6 +472,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -477,6 +483,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -487,6 +494,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -497,6 +505,7 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel","To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
@@ -507,16 +516,17 @@ The plugin will not check these requirements, but will assume that this objectty
 * **Number Field**: integer field
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
+    * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
 The plugin will not check these requirements, but will assume that this objecttype is configured correctly in the datamodel"
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.enabled.checkbox,aktiviert,enabled,enabled,enabled,enabled,enabled,enabled,enabled,enabled,enabled
-server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.enabled.label,-,-,-,-,-,-,-,-,-,-
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_objecttype.label,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_objecttype.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_ref_field.label,Referenzfeld,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_ref_field.label|hint,-,-,-,-,-,-,-,-,-,-
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_num_field.label,Nummernfeld,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field
-server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_num_field.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.parameter.system.objecttypes.sequence_settings.enabled.checkbox,aktiviert,enabled,enabled,enabled,enabled,enabled,enabled,enabled,enabled,enabled
+server.config.parameter.system.objecttypes.sequence_settings.enabled.label,-,-,-,-,-,-,-,-,-,-
+server.config.name.system.sequence.objecttype.label,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
+server.config.name.system.sequence.objecttype.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.name.system.sequence.ref_field.label,Referenzfeld,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field,Reference Field
+server.config.name.system.sequence.ref_field.label|hint,-,-,-,-,-,-,-,-,-,-
+server.config.name.system.sequence.num_field.label,Nummernfeld,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field,Number Field
+server.config.name.system.sequence.num_field.label|hint,-,-,-,-,-,-,-,-,-,-
 sequence-plugin-pool|text,Sequence Plugin: Automatisches Befüllen von Feldern,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields,Sequence Plugin: Automtic content for fields
 sequence-plugin-pool.template|text,Vorlage für Befüllen des Feldes,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content,Template for field content
 sequence-plugin-pool.start_offset|text,Offset,Offset,Offset,Offset,Offset,Offset,Offset,Offset,Offset,Offset

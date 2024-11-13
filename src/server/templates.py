@@ -21,7 +21,16 @@ class TemplatesManager(object):
         'parent.name:l10n': 'parent:pool.name',
     }
 
-    def __init__(self, pool_info, api_url, access_token, sequence_objecttype, sequence_ref_field, sequence_num_field, database_languages) -> None:
+    def __init__(
+        self,
+        pool_info,
+        api_url,
+        access_token,
+        sequence_objecttype,
+        sequence_ref_field,
+        sequence_num_field,
+        database_languages,
+    ) -> None:
 
         self.api_url = api_url
         self.access_token = access_token
@@ -39,21 +48,23 @@ class TemplatesManager(object):
 
             for k in self.pool_value_mappings.keys():
                 p = self.pool_value_mappings[k]
-                k = 'pool.{0}'.format(k)
+                k = f'pool.{k}'
 
                 p_id = pool_id
                 if p.startswith('parent:'):
-                    parent_id = util.get_json_value(pool_info[pool_id], 'pool._id_parent')
+                    parent_id = util.get_json_value(
+                        pool_info[pool_id], 'pool._id_parent'
+                    )
                     if parent_id not in pool_info:
                         continue
                     p_id = parent_id
-                    p = p[len('parent:'):]
+                    p = p[len('parent:') :]
 
                 if k.endswith(':l10n'):
                     l10n = util.get_json_value(pool_info[p_id], p)
                     if not isinstance(l10n, dict):
                         continue
-                    sub_k = k[:-len(':l10n')]
+                    sub_k = k[: -len(':l10n')]
 
                     for lang in l10n.keys():
 
@@ -64,7 +75,7 @@ class TemplatesManager(object):
                         if len(v) < 1:
                             continue
 
-                        self.pool_mappings[pool_id]['{0}:{1}'.format(sub_k, lang)] = v
+                        self.pool_mappings[pool_id][f'{sub_k}:{lang}'] = v
 
                     for lang in self.database_languages:
                         if not lang in l10n:
@@ -98,13 +109,16 @@ class TemplatesManager(object):
         if not isinstance(template, str):
             return None
         for k in self.pool_mappings[pool_id]:
-            template = template.replace('%{0}%'.format(k), self.pool_mappings[pool_id][k])
+            template = template.replace(
+                f'%{k}%',
+                self.pool_mappings[pool_id][k],
+            )
 
         if '%n%' not in template:
             return template
 
         # check if there is an offset defined
-        start_offset = util.get_json_value(settings, '{0}:start_offset'.format(field))
+        start_offset = util.get_json_value(settings, f'{field}:start_offset')
         if not isinstance(start_offset, int):
             start_offset = 0
         if start_offset < 0:
@@ -121,7 +135,7 @@ class TemplatesManager(object):
             self.sequence_objecttype,
             self.sequence_ref_field,
             self.sequence_num_field,
-            pool_id=pool_id
+            pool_id=pool_id,
         )
         if sequence_offset is not None:
             template = template.replace('%n%', str(start_offset + sequence_offset))

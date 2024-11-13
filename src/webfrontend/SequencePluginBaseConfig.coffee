@@ -40,7 +40,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
             when "sequence_objecttype"
                 field = new ez5.ObjecttypeSelector
-                    form: label: $$("server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_objecttype.label")
+                    form: label: $$("server.config.name.system.sequence.objecttype.label")
                     name: fieldName
                     show_name: true
                     store_value: "fullname"
@@ -58,25 +58,25 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
             when "sequence_ref_field"
                 field = new ez5.FieldSelector
-                    form: label: $$("server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_ref_field.label")
+                    form: label: $$("server.config.name.system.sequence.ref_field.label")
                     name: fieldName
-                    objecttype_data_key: "sequence_objecttype"
+                    objecttype_data_key: "objecttype"
                     store_value: "fullname"
                     show_name: true
                     filter: filterTextField
 
             when "sequence_num_field"
                 field = new ez5.FieldSelector
-                    form: label: $$("server.config.name.system.fylr-plugin-sequence.insert_sequence.sequence.sequence_num_field.label")
+                    form: label: $$("server.config.name.system.sequence.num_field.label")
                     name: fieldName
-                    objecttype_data_key: "sequence_objecttype"
+                    objecttype_data_key: "objecttype"
                     store_value: "fullname"
                     show_name: true
                     filter: filterNumberField
 
             when "update_objecttype"
                 field = new ez5.ObjecttypeSelector
-                    form: label: $$("server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_objecttype.label")
+                    form: label: $$("server.config.parameter.system.objecttypes.sequence_settings.update_objecttype.label")
                     name: fieldName
                     show_name: true
                     store_value: "fullname"
@@ -93,7 +93,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
             when "update_column"
                 field = new ez5.FieldSelector
-                    form: label: $$("server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.update_column.label")
+                    form: label: $$("server.config.parameter.system.objecttypes.sequence_settings.update_column.label")
                     name: fieldName
                     objecttype_data_key: "update_objecttype"
                     store_value: "fullname"
@@ -102,7 +102,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
             when "obj_field"
                 field = new ez5.FieldSelector
-                    form: label: $$("server.config.parameter.system.fylr-plugin-sequence.insert_sequence.objecttypes.objecttype_settings.obj_field.label")
+                    form: label: $$("server.config.parameter.system.objecttypes.sequence_settings.obj_field.label")
                     name: fieldName
                     objecttype_data_key: "update_objecttype"
                     store_value: "fullname"

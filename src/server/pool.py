@@ -9,21 +9,23 @@ def __search_pool_ids(api_url, access_token, pool_ids):
         api_url,
         'search',
         access_token,
-        payload=util.dumpjs({
-            'search': [
-                {
-                    'bool': 'must',
-                    'fields': [
-                        'pool._id'
-                    ],
-                    'in': list(pool_ids),
-                    'type': 'in'
-                }
-            ],
-            'limit': 1000,
-            'type': 'pool'
-        }),
-        log_in_tmp_file=False
+        payload=util.dumpjs(
+            {
+                'search': [
+                    {
+                        'bool': 'must',
+                        'fields': [
+                            'pool._id',
+                        ],
+                        'in': list(pool_ids),
+                        'type': 'in',
+                    }
+                ],
+                'limit': 1000,
+                'type': 'pool',
+            }
+        ),
+        log_in_tmp_file=False,
     )
 
     if statuscode != 200:
@@ -127,8 +129,8 @@ def load_pool_data(api_url, access_token, pool_ids):
                 if field == '':
                     continue
 
-                if field.startswith(objecttype + '.'):
-                    field = field[len(objecttype) + 1:]
+                if field.startswith(f'{objecttype}.'):
+                    field = field[len(objecttype) + 1 :]
 
                 template = util.get_json_value(e, 'template')
                 if not isinstance(template, str):
@@ -149,7 +151,11 @@ def load_pool_data(api_url, access_token, pool_ids):
                     only_insert = False
 
                 inherited_custom_data[pool_id][objecttype][field] = template
-                inherited_custom_data[pool_id][objecttype]['{0}:start_offset'.format(field)] = start_offset
-                inherited_custom_data[pool_id][objecttype]['{0}:only_insert'.format(field)] = only_insert
+                inherited_custom_data[pool_id][objecttype][
+                    f'{field}:start_offset'
+                ] = start_offset
+                inherited_custom_data[pool_id][objecttype][
+                    f'{field}:only_insert'
+                ] = only_insert
 
     return pool_info, inherited_custom_data

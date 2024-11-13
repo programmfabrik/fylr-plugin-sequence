@@ -34,24 +34,24 @@ callbacks:
 
 base_config:
 
-  - name: fylr-plugin-sequence.insert_sequence.sequence
+  - name: sequence
     parameters:
-      sequence_objecttype:
+      objecttype:
         type: text
         plugin_type: sequence_objecttype
         position: 0
-      sequence_ref_field:
+      ref_field:
         type: text
         plugin_type: sequence_ref_field
         position: 1
-      sequence_num_field:
+      num_field:
         type: text
         plugin_type: sequence_num_field
         position: 2
 
-  - name: fylr-plugin-sequence.insert_sequence.objecttypes
+  - name: objecttypes
     parameters:
-      objecttype_settings:
+      sequence_settings:
         type: table
         fields:
           - name: enabled

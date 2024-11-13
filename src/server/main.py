@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     # load base config for this plugin
     # directly return the original data if there are any configurations missing
-    main_config_path = 'info.config.plugin.' + PLUGIN_NAME + '.config.' + PLUGIN_NAME + '\.insert_sequence\.'
+    plugin_config_path = f'info.config.plugin.{PLUGIN_NAME}.config'
 
     # load ordered list of database languages from the base config (api/v1/config/system)
     database_languages = []
@@ -59,20 +59,34 @@ if __name__ == '__main__':
         database_languages.append('en-US')
 
     # sequence objecttype settings
-    config_path = main_config_path + 'sequence.'
-
-    sequence_objecttype = util.get_json_value(orig_data, config_path + 'sequence_objecttype')
+    sequence_objecttype = util.get_json_value(
+        orig_data,
+        f'{plugin_config_path}.sequence.objecttype',
+    )
     if sequence_objecttype is None or len(sequence_objecttype) < 1:
         util.return_empty_objects()
-    sequence_ref_field = util.get_json_value(orig_data, config_path + 'sequence_ref_field')
+
+    sequence_ref_field = util.get_json_value(
+        orig_data,
+        f'{plugin_config_path}.sequence.ref_field',
+    )
     if sequence_ref_field is None or len(sequence_ref_field) < 1:
         util.return_empty_objects()
-    sequence_num_field = util.get_json_value(orig_data, config_path + 'sequence_num_field')
+
+    sequence_num_field = util.get_json_value(
+        orig_data,
+        f'{plugin_config_path}.sequence.num_field',
+    )
+
     if sequence_num_field is None or len(sequence_num_field) < 1:
         util.return_empty_objects()
 
     # objecttypes/fields settings
-    ot_settings = util.get_json_value(orig_data, main_config_path + 'objecttypes.objecttype_settings')
+    ot_settings = util.get_json_value(
+        orig_data,
+        f'{plugin_config_path}.objecttypes.sequence_settings',
+    )
+
     if not isinstance(ot_settings, list):
         util.return_empty_objects()
 
@@ -90,8 +104,8 @@ if __name__ == '__main__':
         column = util.get_json_value(config_entry, 'update_column')
         if not isinstance(column, str):
             continue
-        if column.startswith(objecttype + '.'):
-            column = column[len(objecttype) + 1:]
+        if column.startswith(f'{objecttype}.'):
+            column = column[len(objecttype) + 1 :]
         if len(column) < 1:
             continue
 
@@ -106,7 +120,13 @@ if __name__ == '__main__':
             else:
                 obj_field = None
 
-        no_sequence_if_empty_field = util.get_json_value(config_entry, 'no_sequence_if_empty_field') == True
+        no_sequence_if_empty_field = (
+            util.get_json_value(
+                config_entry,
+                'no_sequence_if_empty_field',
+            )
+            == True
+        )
 
         template = util.get_json_value(config_entry, 'template')
         if not isinstance(template, str):
@@ -143,7 +163,7 @@ if __name__ == '__main__':
         if not isinstance(objecttype, str):
             continue
 
-        pool_id = util.get_json_value(obj, '{0}._pool.pool._id'.format(objecttype))
+        pool_id = util.get_json_value(obj, f'{objecttype}._pool.pool._id')
         if isinstance(pool_id, int):
             pool_ids.add(pool_id)
 
@@ -155,7 +175,7 @@ if __name__ == '__main__':
         pool_info, pool_customdata = pool.load_pool_data(
             api_url,
             access_token,
-            pool_ids
+            pool_ids,
         )
 
     templates_manager = templates.TemplatesManager(
@@ -165,7 +185,7 @@ if __name__ == '__main__':
         sequence_objecttype,
         sequence_ref_field,
         sequence_num_field,
-        database_languages
+        database_languages,
     )
 
     updated_objects = []
@@ -181,12 +201,12 @@ if __name__ == '__main__':
 
         # skip objects that are not configured in the base config and that are not in a pool
         objecttype = util.get_json_value(obj, '_objecttype')
-        pool_id = util.get_json_value(obj, '{0}._pool.pool._id'.format(objecttype))
+        pool_id = util.get_json_value(obj, f'{objecttype}._pool.pool._id')
         if objecttype not in objecttype_fields and pool_id is None:
             # another objecttype was inserted, nothing to do here
             continue
 
-        version = util.get_json_value(obj, '{0}._version'.format(objecttype))
+        version = util.get_json_value(obj, f'{objecttype}._version')
 
         # iterate over the templates for different fields which are defined in the base configuration
         # check if the fields need to be updated
@@ -205,11 +225,11 @@ if __name__ == '__main__':
             is_linked_field = oc['is_linked_field']
 
             # skip if the object was updated but the field setting for only_insert is true
-            if only_insert and util.get_json_value(obj, objecttype + '._version') != 1:
+            if only_insert and util.get_json_value(obj, f'{objecttype}._version') != 1:
                 # object was updated, nothing to do here
                 continue
 
-            field_value = util.get_json_value(obj, '%s.%s' % (objecttype, column))
+            field_value = util.get_json_value(obj, f'{objecttype}.{column}')
             if field_value not in [None, '']:
                 # field is already set, nothing to do here
                 continue
@@ -225,11 +245,7 @@ if __name__ == '__main__':
             # 3:    try to update the sequence object (protected by object version)
             # 4:    if the sequence was updated, update and return the objects, break loop
 
-            sequence_ref = '{0}:{1}.{2}'.format(
-                PLUGIN_NAME,
-                objecttype,
-                column
-            )
+            sequence_ref = f'{PLUGIN_NAME}:{objecttype}.{column}'
 
             obj_field_value = None
             if obj_field is not None:
@@ -240,12 +256,20 @@ if __name__ == '__main__':
 
                     if path_to_linked_field[0].startswith('_nested:'):
                         # if the linked object is inside a nested table, use the first entry if possible
-                        nested = util.get_json_value(obj[objecttype], path_to_linked_field[0])
+                        nested = util.get_json_value(
+                            obj[objecttype], path_to_linked_field[0]
+                        )
                         if isinstance(nested, list) and len(nested) > 0:
-                            sys_id = util.get_json_value(nested[0], '.'.join(path_to_linked_field[1:-1]) + '._system_object_id')
+                            sys_id = util.get_json_value(
+                                nested[0],
+                                f'{".".join(path_to_linked_field[1:-1])}._system_object_id',
+                            )
                     else:
                         # check if there is a value for the linked field in this object: search for the linked object
-                        sys_id = util.get_json_value(obj[objecttype], path_to_linked_field[0] + '._system_object_id')
+                        sys_id = util.get_json_value(
+                            obj[objecttype],
+                            f'{path_to_linked_field[0]}._system_object_id',
+                        )
 
                     if sys_id is not None:
                         if sys_id in linked_object_cache:
@@ -254,7 +278,10 @@ if __name__ == '__main__':
                             ok, result = search.do_search(api_url, access_token, sys_id)
                             if ok:
                                 link_ot = util.get_json_value(result, '_objecttype')
-                                obj_field_value = util.get_json_value(result, link_ot + '.' + path_to_linked_field[-1])
+                                obj_field_value = util.get_json_value(
+                                    result,
+                                    f'{link_ot}.{path_to_linked_field[-1]}',
+                                )
                 else:
                     # value is not in a linked object, check if it is set in the object
                     obj_field_value = util.get_json_value(obj[objecttype], obj_field)
@@ -269,7 +296,7 @@ if __name__ == '__main__':
                     obj_field_value = 'N/A'
 
             if obj_field_value is not None:
-                sequence_ref += ':{0}={1}'.format(obj_field, obj_field_value)
+                sequence_ref += f':{obj_field}={obj_field_value}'
 
             seq = sequence.FylrSequence(
                 api_url,
@@ -278,7 +305,8 @@ if __name__ == '__main__':
                 sequence_objecttype,
                 sequence_ref_field,
                 sequence_num_field,
-                log_in_tmp_file=False)
+                log_in_tmp_file=False,
+            )
 
             do_repeat = True
             repeated = 0
@@ -292,10 +320,14 @@ if __name__ == '__main__':
 
                 if error is not None:
                     # indicator that something went wrong and the plugin should just return an error message
-                    util.return_error_response(util.dumpjs({
-                        'error': 'could not update sequence',
-                        'reason': error
-                    }))
+                    util.return_error_response(
+                        util.dumpjs(
+                            {
+                                'error': 'could not update sequence',
+                                'reason': error,
+                            }
+                        )
+                    )
 
                 if not update_ok:
                     # sleep for 1 second and try again to get and update the sequence
@@ -314,10 +346,14 @@ if __name__ == '__main__':
                     # perform a replacement of `%d` related formats in template with the new sequence value
                     new_value = template % (start_offset + offset)
                 except TypeError as e:
-                    util.return_error_response(util.dumpjs({
-                        'error': 'template "' + template + '" is invalid to format a sequential string',
-                        'reason': str(e)
-                    }))
+                    util.return_error_response(
+                        util.dumpjs(
+                            {
+                                f'error': f'template "{template}" is invalid to format a sequential string',
+                                'reason': str(e),
+                            }
+                        )
+                    )
 
                 obj[objecttype][column] = new_value
                 obj_changed = True
@@ -333,19 +369,19 @@ if __name__ == '__main__':
                         'start_offset',
                         'only_insert',
                     ]:
-                        if field.endswith(':{0}'.format(suffix)):
+                        if field.endswith(f':{suffix}'):
                             skip = True
                             break
                     if skip:
                         continue
 
                     # if the template should only be applied when the object is inserted, check if the object has version 1
-                    if util.get_json_value(settings, '{0}:only_insert'.format(field)) == True:
+                    if util.get_json_value(settings, f'{field}:only_insert') == True:
                         if version != 1:
                             continue
 
                     # do not override if the field already has a value
-                    field_value = util.get_json_value(obj, '{0}.{1}'.format(objecttype, field))
+                    field_value = util.get_json_value(obj, f'{objecttype}.{field}')
                     if field_value not in [None, '']:
                         continue
 
@@ -353,7 +389,7 @@ if __name__ == '__main__':
                         settings,
                         objecttype,
                         field,
-                        pool_id
+                        pool_id,
                     )
                     if new_value is None:
                         continue
@@ -365,6 +401,8 @@ if __name__ == '__main__':
             updated_objects.append(obj)
 
     # everything ok, return only the updated objects, exit program
-    util.return_response({
-        'objects': updated_objects
-    })
+    util.return_response(
+        {
+            'objects': updated_objects,
+        }
+    )

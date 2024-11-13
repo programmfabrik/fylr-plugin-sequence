@@ -9,21 +9,23 @@ def do_search(api_url, access_token, sys_id):
         api_url,
         'search',
         access_token,
-        payload=util.dumpjs({
-            'search': [
-                {
-                    'type': 'in',
-                    'in': [
-                        sys_id
-                    ],
-                    'fields': [
-                        '_system_object_id'
-                    ],
-                    'bool': 'must'
-                }
-            ],
-            'format': 'long'
-        })
+        payload=util.dumpjs(
+            {
+                'search': [
+                    {
+                        'type': 'in',
+                        'in': [
+                            sys_id,
+                        ],
+                        'fields': [
+                            '_system_object_id',
+                        ],
+                        'bool': 'must',
+                    }
+                ],
+                'format': 'long',
+            }
+        ),
     )
 
     if statuscode == 200:
@@ -32,17 +34,17 @@ def do_search(api_url, access_token, sys_id):
             objects = util.get_json_value(js, 'objects')
             if not isinstance(objects, list) or len(objects) < 1:
                 return False, {
-                    'response': 'no objects in search result'
+                    'response': 'no objects in search result',
                 }
             return True, objects[0]
         except:
             return False, {
-                'response': 'could not parse search response'
+                'response': 'could not parse search response',
             }
 
     # something went wrong
     error = {
-        'url': api_url + '/search',
+        'url': f'{api_url}/search',
         'statuscode': statuscode,
     }
     error_resp = None
