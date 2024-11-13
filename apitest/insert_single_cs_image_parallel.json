@@ -1,0 +1,37 @@
+[
+    {
+        "name": "POST /api/v1/db/cs_image ({{ datastore `n_single_objects` }} parallel object uploads)",
+        "request": {
+            "body": [
+                {
+                    "_mask": "cs_image__all_fields",
+                    "_objecttype": "cs_image",
+                    "cs_image": {
+                        "_version": 1,
+                        "name": null
+                    }
+                }
+            ],
+            "endpoint": "db/cs_image",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "body": [
+                {
+                    "cs_image": {
+                        "name:control": {
+                            "match": "HU0+\\d"
+                        },
+                        "description:control": {
+                            "match": "DESC: #30\\d+"
+                        }
+                    }
+                }
+            ],
+            "statuscode": 200
+        }
+    }
+]

@@ -1,35 +1,35 @@
 {{ $config := datastore "setup_config" }}
 {{ if eq $config "" }}
-  {{ $config = file "base-config.json" }}
+    {{ $config = file "base-config.json" }}
 {{ end }}
 [
-  {
-    "name": "post config",
-    "request": {
-      "header_from_store": {
-        "Authorization": "root-token"
-      }
-      ,"endpoint": "config"
-      ,"method": "POST"
-      ,"body": {{ $config }}
+    {
+        "name": "post config",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "config",
+            "method": "POST",
+            "body": {{ $config }}
+        },
+        "response": {
+            "statuscode": 200,
+            "body": {{ $config }}
+        }
     },
-    "response": {
-      "statuscode": 200
-      ,"body": {{ $config }}
+    {
+        "name": "get config",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "config",
+            "method": "GET"
+        },
+        "response": {
+            "statuscode": 200,
+            "body": {{ $config }}
+        }
     }
-  },
-  {
-    "name": "get config",
-    "request": {
-      "header_from_store": {
-        "Authorization": "root-token"
-      }
-      ,"endpoint": "config"
-      ,"method": "GET"
-    },
-    "response": {
-      "statuscode": 200
-      ,"body": {{ $config }}
-    }
-  }
 ]

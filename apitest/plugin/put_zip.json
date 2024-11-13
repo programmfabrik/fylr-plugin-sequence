@@ -1,0 +1,27 @@
+[
+    {
+        "name": "post build/easydb-plugin-sequence.zip to eas/put",
+        "request": {
+            "body": {
+                "file": "@../../build/fylr-plugin-sequence.zip"
+            },
+            "body_type": "multipart",
+            "endpoint": "eas/put",
+            "method": "POST",
+            "query_params": {
+                "produce_versions": "[false]"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "extension": "zip"
+                }
+            ]
+        },
+        "store_response_gjson": {
+            "plugin_zip_id": "body.0._id"
+        }
+    }
+]

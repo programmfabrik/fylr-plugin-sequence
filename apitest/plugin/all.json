@@ -1,0 +1,6 @@
+[
+    "@put_zip.json",
+    "@wait_for_zip_done.json",
+    "@plugin_init.json",
+    "@enable_plugin.json"
+]

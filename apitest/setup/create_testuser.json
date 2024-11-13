@@ -48,7 +48,7 @@
     "response": {
         "statuscode": 200
     },
-    "store_response_qjson": {
+    "store_response_gjson": {
         "testuser_id": "body.0.user._id"
     }
 }

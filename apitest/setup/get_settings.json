@@ -11,7 +11,7 @@
         "response": {
             "statuscode": 200
         },
-        "store_response_qjson": {
+        "store_response_gjson": {
             "settings.name": "body.name",
             "settings.version": "body.version",
             "settings.instance": "body.instance",

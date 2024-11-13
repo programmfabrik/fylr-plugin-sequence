@@ -38,9 +38,7 @@
                                     "image"
                                 ],
                                 "limit": "0B",
-                                "column_ids": [
-                                    11
-                                ]
+                                "column_ids": []
                             },
                             "create": {},
                             "delete": {

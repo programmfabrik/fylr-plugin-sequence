@@ -5,9 +5,9 @@
     // get settings again, after purge we have a new db instance id
     ,"@get_settings.json"
     ,"@root_session.json"
-    ,"@post_config.json"
     ,"@POST_datamodel_commit.json"
-    ,"@plugin_init.json"
+    ,"@../plugin/all.json"
+    ,"@post_config.json"
     {{ if not (datastore `as_root`) }}
         ,"@create_testuser.json"
         ,"@update_objecttype_permissions.json"

@@ -1,9 +1,9 @@
 [
     {
-        "name": "POST /api/v1/db/cs_image",
+        "name": "POST /api/v1/db/cs_image ({{ datastore `n_single_objects` }} objects in one request)",
         "request": {
             "body": [
-                {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+                {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
                     {{ if gt $idx 0 }}, {{ end }}
                     {
                         "_mask": "cs_image__all_fields",
@@ -26,17 +26,17 @@
                 "order_matters": true
             },
             "body": [
-                {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+                {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
                     {{ if gt $idx 0 }}, {{ end }}
                     {
                         "cs_image": {
                             "name:control": {
                                 "starts_with": "HU0",
-                                "ends_with": "0{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
+                                "ends_with": "0{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
                             },
                             "description:control": {
                                 "starts_with": "DESC: #30",
-                                "ends_with": "{{ add ( add $idx 1 ) ( datastore "n_single_objects" ) }}"
+                                "ends_with": "{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
                             }
                         }
                     }

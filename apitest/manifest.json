@@ -1,3 +1,14 @@
+//////////////////////////////////////////////////////
+//                                                  //
+//  This apitest only works if plugin zip exists at //
+//  ../../build/fylr-plugin-sequence.zip            //
+//                                                  //
+//  Run `make zip` before running apitest           //
+//                                                  //
+//////////////////////////////////////////////////////
+
+{{ $n_objects := 5 }}
+
 {
     "name": "fylr-plugin-sequence",
     "header_from_store": {
@@ -12,12 +23,17 @@
         {
             "store": {
                 "as_root": true,
-                "n_single_objects": 3
+                "n_single_objects": {{ $n_objects }}
             }
         }
+
+        // single editor instance saves objects
         , "@setup/all.json"
         , "@testcases.json"
 
+        // parallel saving of objects
+        , "@setup/all.json"
+        , "{{ $n_objects }}@insert_single_cs_image_parallel.json"
 
         // tests with test user account with minimal objecttype permissions
         , {
@@ -25,7 +41,13 @@
                 "as_root": false
             }
         }
+
+        // single editor instance saves objects
         , "@setup/all.json"
         , "@testcases.json"
+
+        // parallel saving of objects
+        , "@setup/all.json"
+        , "{{ $n_objects }}@insert_single_cs_image_parallel.json"
     ]
 }

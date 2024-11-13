@@ -36,34 +36,32 @@
                     },
                     {
                         "kind": "column",
-                        "name": "easfile_id",
-                        "type": "eas",
-                        "not_null": false,
-                        "column_id": 11,
-                        "custom_settings": {},
-                        "name_localized": null
-                    },
-                    {
-                        "kind": "column",
                         "name": "name",
                         "type": "text_oneline",
                         "not_null": true,
                         "column_id": 21,
                         "custom_settings": {},
                         "name_localized": null
-                    },
-                    {
-                        "kind": "column",
-                        "name": "todo",
-                        "type": "text",
-                        "not_null": false,
-                        "column_id": 24,
-                        "custom_settings": {},
-                        "name_localized": null
                     }
                 ],
                 "foreign_keys": [],
                 "unique_keys": [
+                    {
+                        "columns": [
+                            {
+                                "column_id": 9,
+                                "column_name_hint": "easydb4_reference"
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "column_id": 10,
+                                "column_name_hint": "description"
+                            }
+                        ]
+                    },
                     {
                         "columns": [
                             {
@@ -235,9 +233,11 @@
                             "table": true,
                             "standard": {
                                 "format": "comma",
-                                "order": 1
+                                "order": 1,
+                                "stop_if_set": false
                             },
-                            "standard_eas": {}
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -245,7 +245,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     },
                     {
                         "kind": "field",
@@ -258,8 +259,13 @@
                             "detail": true,
                             "text": true,
                             "table": true,
-                            "standard": {},
-                            "standard_eas": {}
+                            "standard": {
+                                "format": "comma",
+                                "order": 2,
+                                "stop_if_set": false
+                            },
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -267,55 +273,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
-                    },
-                    {
-                        "kind": "field",
-                        "column_id": 24,
-                        "column_name_hint": "description",
-                        "edit": {
-                            "mode": "edit"
-                        },
-                        "output": {
-                            "detail": true,
-                            "text": true,
-                            "table": true,
-                            "standard": {},
-                            "standard_eas": {}
-                        },
-                        "search": {
-                            "expert": true,
-                            "fulltext": true,
-                            "facet": true,
-                            "nested": false
-                        },
-                        "custom_settings": {}
-                    },
-                    {
-                        "kind": "field",
-                        "column_id": 11,
-                        "column_name_hint": "easfile_id",
-                        "edit": {
-                            "mode": "edit"
-                        },
-                        "output": {
-                            "detail": true,
-                            "text": true,
-                            "table": true,
-                            "standard": {},
-                            "standard_eas": {
-                                "order": 1
-                            }
-                        },
-                        "search": {
-                            "expert": true,
-                            "fulltext": true,
-                            "facet": true,
-                            "nested": false
-                        },
-                        "custom_settings": {
-                            "show_in_map": true
-                        }
+                        "custom_settings": {},
+                        "inheritance": null
                     },
                     {
                         "kind": "field",
@@ -328,8 +287,11 @@
                             "detail": true,
                             "text": true,
                             "table": true,
-                            "standard": {},
-                            "standard_eas": {}
+                            "standard": {
+                                "stop_if_set": false
+                            },
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -337,9 +299,16 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     }
-                ]
+                ],
+                "custom_settings": {
+                    "system_fields": {
+                        "other_fields_edit": "show",
+                        "other_fields_output": "show"
+                    }
+                }
             },
             {
                 "name": "sequence__all_fields",
@@ -398,9 +367,11 @@
                             "table": true,
                             "standard": {
                                 "format": "comma",
-                                "order": 2
+                                "order": 2,
+                                "stop_if_set": false
                             },
-                            "standard_eas": {}
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -408,7 +379,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     },
                     {
                         "kind": "field",
@@ -423,9 +395,11 @@
                             "table": true,
                             "standard": {
                                 "format": "comma",
-                                "order": 1
+                                "order": 1,
+                                "stop_if_set": false
                             },
-                            "standard_eas": {}
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -433,7 +407,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     }
                 ]
             },
@@ -474,6 +449,11 @@
                             "mode": "off"
                         }
                     },
+                    "pool": {
+                        "output": {
+                            "mode": "off"
+                        }
+                    },
                     "publish": {
                         "output": {
                             "mode": "off"
@@ -494,9 +474,11 @@
                             "table": true,
                             "standard": {
                                 "format": "colon",
-                                "order": 1
+                                "order": 1,
+                                "stop_if_set": false
                             },
-                            "standard_eas": {}
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -504,7 +486,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     },
                     {
                         "kind": "field",
@@ -519,9 +502,11 @@
                             "table": true,
                             "standard": {
                                 "format": "comma",
-                                "order": 1
+                                "order": 1,
+                                "stop_if_set": false
                             },
-                            "standard_eas": {}
+                            "standard_eas": {},
+                            "standard_geo": {}
                         },
                         "search": {
                             "expert": true,
@@ -529,7 +514,8 @@
                             "facet": true,
                             "nested": false
                         },
-                        "custom_settings": {}
+                        "custom_settings": {},
+                        "inheritance": null
                     }
                 ]
             }

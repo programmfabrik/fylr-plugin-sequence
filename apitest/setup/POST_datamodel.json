@@ -7,7 +7,7 @@
             },
             "endpoint": "schema/user/HEAD",
             "method": "POST",
-            "body": {{  datastore "setup_datamodel" | qjson "schema" }}
+            "body": {{  datastore "setup_datamodel" | gjson "schema" }}
         }
     }
     ,{
@@ -18,7 +18,7 @@
             },
             "endpoint": "mask/HEAD",
             "method": "POST",
-            "body": {{ datastore "setup_datamodel" | qjson "mask" }}
+            "body": {{ datastore "setup_datamodel" | gjson "mask" }}
         }
     }
     ,{
@@ -29,7 +29,7 @@
             },
             "endpoint": "l10n/user/HEAD",
             "method": "POST",
-            "body": {{ datastore "setup_datamodel" | qjson "keys" }}
+            "body": {{ datastore "setup_datamodel" | gjson "keys" }}
         }
     }
 ]

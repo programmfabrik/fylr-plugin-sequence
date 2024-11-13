@@ -1,5 +1,5 @@
 [
-    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "root" "admin" | marshal | qjson "access_token" | unmarshal }}
+    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "root" "admin" | marshal | gjson "access_token" | unmarshal }}
     {
         "name": "GET /session for \"root\"",
         "request": {
@@ -9,7 +9,7 @@
                 "Authorization": "Bearer {{ $accessToken }}"
             }
         },
-        "store_response_qjson": {
+        "store_response_gjson": {
             "rootUserID": "body.user.user._id",
             "rootUserVersion": "body.user.user._version",
             "maxEventID": "body.current_max_event_id"

@@ -1,0 +1,31 @@
+[
+    {
+        "name": "PUT /api/v1/plugin/manage",
+        "request": {
+            "body": {
+                "type": "zip",
+                "url": "",
+                "zip_file": {
+                    "_id": {{ datastore `plugin_zip_id` }},
+                    "preferred": true
+                }
+            },
+            "endpoint": "plugin/manage",
+            "method": "PUT"
+        },
+        "response": {
+            "body": {
+                "id:control": {
+                    "is_number": true
+                },
+                "zip_file": {
+                    "_id": {{ datastore `plugin_zip_id` }}
+                }
+            },
+            "statuscode": 200
+        },
+        "store_response_gjson": {
+            "plugin_id": "body.id"
+        }
+    }
+]

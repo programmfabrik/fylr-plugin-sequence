@@ -2,8 +2,13 @@
     "plugin": {
         "fylr-plugin-sequence": {
             "config": {
-                "fylr-plugin-sequence.insert_sequence.objecttypes": {
-                    "objecttype_settings": [
+                "sequence": {
+                    "objecttype": "sequence",
+                    "ref_field": "sequence.reference",
+                    "num_field": "sequence.number"
+                },
+                "objecttypes": {
+                    "sequence_settings": [
                         {
                             "enabled": true,
                             "update_objecttype": "cs_image",
@@ -28,11 +33,6 @@
                             "only_insert": true
                         }
                     ]
-                },
-                "fylr-plugin-sequence.insert_sequence.sequence": {
-                    "sequence_objecttype": "sequence",
-                    "sequence_ref_field": "sequence.reference",
-                    "sequence_num_field": "sequence.number"
                 }
             }
         }

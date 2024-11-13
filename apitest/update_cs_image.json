@@ -1,7 +1,7 @@
 [
-    {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+    {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
         {
-            "name": "POST /api/v1/db/cs_image: update",
+            "name": "POST /api/v1/db/cs_image: update (#{{ $idx }})",
             "request": {
                 "body": [
                     {
@@ -27,7 +27,7 @@
                         "cs_image": {
                             "name:control": {
                                 "starts_with": "HU0",
-                                "ends_with": "{{ add ( add $idx 1 ) ( mul 2 (datastore "n_single_objects") ) }}"
+                                "ends_with": "{{ add ( add $idx 1 ) ( mul 2 (datastore `n_single_objects`) ) }}"
                             },
                             "description:control": {
                                  "must_not_exist": true
@@ -37,7 +37,7 @@
                 ],
                 "statuscode": 200
             },
-            "store_response_qjson": {
+            "store_response_gjson": {
                 "cs_image_version_{{ $idx }}": "body.0.cs_image._version"
             }
         },

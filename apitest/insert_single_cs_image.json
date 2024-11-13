@@ -1,7 +1,7 @@
 [
-    {{ range $idx, $v := N ( datastore "n_single_objects" ) }}
+    {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
         {
-            "name": "POST /api/v1/db/cs_image",
+            "name": "POST /api/v1/db/cs_image (#{{ $idx }})",
             "request": {
                 "body": [
                     {
@@ -36,7 +36,7 @@
                 ],
                 "statuscode": 200
             },
-            "store_response_qjson": {
+            "store_response_gjson": {
                 "cs_image_id_{{ $idx }}": "body.0.cs_image._id",
                 "cs_image_version_{{ $idx }}": "body.0.cs_image._version"
             }

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "GET /api/v1/eas",
+        "request": {
+            "endpoint": "eas",
+            "method": "GET",
+            "query_params": {
+                "format": "standard",
+                "ids": "[{{ datastore `plugin_zip_id` }}]"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": {
+                "{{ datastore `plugin_zip_id` }}": {
+                    "_id": {{ datastore `plugin_zip_id` }},
+                    "status": "done",
+                    "extension": "zip",
+                    "is_original": true
+                }
+            }
+        },
+        "timeout_ms": 60000,
+        "delay_ms": 1000
+    }
+]
