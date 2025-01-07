@@ -1,0 +1,108 @@
+[
+    {
+        "name": "POST /api/v1/user testuser1",
+        "request": {
+            "body": [
+                {
+                    "_basetype": "user",
+                    "_password": "testuser1",
+                    "_system_rights": {
+                        "system.frontend_features": {
+                            "acl_manager": [],
+                            "asset_browser_metadata_tool": false,
+                            "changelog": false,
+                            "collection": [],
+                            "collection_presentation": false,
+                            "csv_importer": false,
+                            "download": false,
+                            "editor_bulk": false,
+                            "editor_bulk_delete": false,
+                            "export": false,
+                            "json_importer": false,
+                            "metadata_export": null,
+                            "metadata_upload": null,
+                            "print": false,
+                            "script_runner": false,
+                            "show_system_tags": false,
+                            "stored_searches": false
+                        },
+                        "system.search": {
+                            "has_own_collections": false,
+                            "show_fixed_searches": false
+                        }
+                    },
+                    "user": {
+                        "_id": null,
+                        "_version": 1,
+                        "frontend_language": "en-US",
+                        "login": "testuser1",
+                        "reference": "testuser1",
+                        "require_password_change": false,
+                        "type": "easydb"
+                    }
+                }
+            ],
+            "endpoint": "user",
+            "method": "POST"
+        },
+        "response": {
+            "statuscode": 200
+        },
+        "store_response_gjson": {
+            "testuser1_id": "body.0.user._id"
+        }
+    },
+    {
+        "name": "POST /api/v1/user testuser2",
+        "request": {
+            "body": [
+                {
+                    "_basetype": "user",
+                    "_password": "testuser2",
+                    "_system_rights": {
+                        "system.frontend_features": {
+                            "acl_manager": [],
+                            "asset_browser_metadata_tool": false,
+                            "changelog": false,
+                            "collection": [],
+                            "collection_presentation": false,
+                            "csv_importer": false,
+                            "download": false,
+                            "editor_bulk": false,
+                            "editor_bulk_delete": false,
+                            "export": false,
+                            "json_importer": false,
+                            "metadata_export": null,
+                            "metadata_upload": null,
+                            "print": false,
+                            "script_runner": false,
+                            "show_system_tags": false,
+                            "stored_searches": false
+                        },
+                        "system.search": {
+                            "has_own_collections": false,
+                            "show_fixed_searches": false
+                        }
+                    },
+                    "user": {
+                        "_id": null,
+                        "_version": 1,
+                        "frontend_language": "en-US",
+                        "login": "testuser2",
+                        "reference": "testuser2",
+                        "require_password_change": false,
+                        "type": "easydb"
+                    }
+                }
+            ],
+            "endpoint": "user",
+            "method": "POST"
+        },
+        "response": {
+            "statuscode": 200
+        },
+        "store_response_gjson": {
+            "testuser2_id": "body.0.user._id"
+        }
+    }
+]

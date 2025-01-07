@@ -19,19 +19,23 @@
             }
         },
         "response": {
-            "body": [
-                {
-                    "cs_image": {
-                        "name:control": {
-                            "match": "HU0+\\d"
-                        },
-                        "description:control": {
-                            "match": "DESC: #30\\d+"
+            {{ if (datastore `expect_error`) }}
+                "statuscode": 400
+            {{ else }}
+                "body": [
+                    {
+                        "cs_image": {
+                            "name:control": {
+                                "match": "HU0+\\d"
+                            },
+                            "description:control": {
+                                "match": "DESC: #30\\d+"
+                            }
                         }
                     }
-                }
-            ],
-            "statuscode": 200
+                ],
+                "statuscode": 200
+            {{ end }}
         }
     }
 ]

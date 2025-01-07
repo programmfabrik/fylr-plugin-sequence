@@ -2,7 +2,8 @@
     "name": "POST /api/v1/objecttype",
     "request": {
         "body": [
-            // update necessary objecttypes with minimal permissions for testuser
+            // update necessary objecttypes with minimal permissions for testuser1
+            // testuser2 has no rights on objects to test internal error handling in the plugin
             {
                 "_basetype": "objecttype",
                 "objecttype": {
@@ -25,7 +26,7 @@
                         "who": {
                             "_basetype": "user",
                             "user": {
-                                "_id": {{ datastore `testuser_id` }}
+                                "_id": {{ datastore `testuser1_id` }}
                             }
                         },
                         "sticky": false,
@@ -92,7 +93,7 @@
                         "who": {
                             "_basetype": "user",
                             "user": {
-                                "_id": {{ datastore `testuser_id` }}
+                                "_id": {{ datastore `testuser1_id` }}
                             }
                         },
                         "sticky": false,

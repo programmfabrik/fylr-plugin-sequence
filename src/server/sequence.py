@@ -118,7 +118,6 @@ class FylrSequence(object):
     def __str__(self) -> str:
         return f'{self.ref}: {self.current_number}'
 
-    @util.handle_exceptions
     def get_from_api(self, path):
         resp, statuscode = util.get_from_api(
             self.api_url,
@@ -128,7 +127,6 @@ class FylrSequence(object):
         )
         return resp, statuscode
 
-    @util.handle_exceptions
     def post_to_api(self, path, payload=None):
         resp, statuscode = util.post_to_api(
             self.api_url,
@@ -233,25 +231,13 @@ class FylrSequence(object):
             self.version += 1
             return True, None
 
-        elif statuscode >= 400 and statuscode < 500:
+        elif statuscode == 400:
             # some api error, maybe wrong version
             # => caller should repeat the process, and get the new current sequence number
             return False, None
 
-        else:
-            # something went wrong, caller should not try to repeat updating the sequence
-            error = {
-                'url': f'{self.api_url}/db/{self.sequence_objecttype}',
-                'statuscode': statuscode,
-            }
-            error_resp = None
-            try:
-                error_resp = json.loads(resp)
-            except:
-                error_resp = resp
-            error['response'] = error_resp
-
-            return False, error
+        if statuscode != 200:
+            raise Exception(f'invalid response: {statuscode} - {resp}')
 
     @util.handle_exceptions
     def get_sequence_objecttype_mask(self):

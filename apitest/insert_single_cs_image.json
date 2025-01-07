@@ -20,21 +20,25 @@
                 }
             },
             "response": {
-                "body": [
-                    {
-                        "cs_image": {
-                            "name:control": {
-                                "starts_with": "HU0",
-                                "ends_with": "0{{ add $idx 1 }}"
-                            },
-                            "description:control": {
-                                "starts_with": "DESC: #30",
-                                "ends_with": "{{ add $idx 1 }}"
+                {{ if (datastore `expect_error`) }}
+                    "statuscode": 400
+                {{ else }}
+                    "body": [
+                        {
+                            "cs_image": {
+                                "name:control": {
+                                    "starts_with": "HU0",
+                                    "ends_with": "0{{ add $idx 1 }}"
+                                },
+                                "description:control": {
+                                    "starts_with": "DESC: #30",
+                                    "ends_with": "{{ add $idx 1 }}"
+                                }
                             }
                         }
-                    }
-                ],
-                "statuscode": 200
+                    ],
+                    "statuscode": 200
+                {{ end }}
             },
             "store_response_gjson": {
                 "cs_image_id_{{ $idx }}": "body.0.cs_image._id",

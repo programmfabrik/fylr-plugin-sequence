@@ -8,9 +8,14 @@
     ,"@POST_datamodel_commit.json"
     ,"@../plugin/all.json"
     ,"@post_config.json"
-    {{ if not (datastore `as_root`) }}
-        ,"@create_testuser.json"
+    // check if a test user is used for login, else root
+    {{ if eq (datastore `user`) "testuser1" }}
+        ,"@create_testusers.json"
         ,"@update_objecttype_permissions.json"
-        ,"@testuser_session.json"
+        ,"@testuser1_session.json"
+    {{ else if eq (datastore `user`) "testuser2" }}
+        ,"@create_testusers.json"
+        ,"@update_objecttype_permissions.json"
+        ,"@testuser2_session.json"
     {{ end }}
 ]

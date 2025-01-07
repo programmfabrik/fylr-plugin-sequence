@@ -1,7 +1,7 @@
 [
-    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "testuser" "testuser" | marshal | gjson "access_token" | unmarshal }}
+    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "testuser1" "testuser1" | marshal | gjson "access_token" | unmarshal }}
     {
-        "name": "GET /session for \"testuser\"",
+        "name": "GET /session for \"testuser1\"",
         "request": {
             "endpoint": "user/session",
             "method": "GET",

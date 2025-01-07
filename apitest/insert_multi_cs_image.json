@@ -22,27 +22,31 @@
             }
         },
         "response": {
-            "body:control": {
-                "order_matters": true
-            },
-            "body": [
-                {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
-                    {{ if gt $idx 0 }}, {{ end }}
-                    {
-                        "cs_image": {
-                            "name:control": {
-                                "starts_with": "HU0",
-                                "ends_with": "0{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
-                            },
-                            "description:control": {
-                                "starts_with": "DESC: #30",
-                                "ends_with": "{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
+            {{ if (datastore `expect_error`) }}
+                "statuscode": 400
+            {{ else }}
+                "body:control": {
+                    "order_matters": true
+                },
+                "body": [
+                    {{ range $idx, $v := N ( datastore `n_single_objects` ) }}
+                        {{ if gt $idx 0 }}, {{ end }}
+                        {
+                            "cs_image": {
+                                "name:control": {
+                                    "starts_with": "HU0",
+                                    "ends_with": "0{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
+                                },
+                                "description:control": {
+                                    "starts_with": "DESC: #30",
+                                    "ends_with": "{{ add ( add $idx 1 ) ( datastore `n_single_objects` ) }}"
+                                }
                             }
                         }
-                    }
-                {{ end }}
-            ],
-            "statuscode": 200
+                    {{ end }}
+                ],
+                "statuscode": 200
+            {{ end }}
         }
     }
 ]

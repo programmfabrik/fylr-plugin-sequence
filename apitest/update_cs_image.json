@@ -22,20 +22,24 @@
                 }
             },
             "response": {
-                "body": [
-                    {
-                        "cs_image": {
-                            "name:control": {
-                                "starts_with": "HU0",
-                                "ends_with": "{{ add ( add $idx 1 ) ( mul 2 (datastore `n_single_objects`) ) }}"
-                            },
-                            "description:control": {
-                                 "must_not_exist": true
+                {{ if (datastore `expect_error`) }}
+                    "statuscode": 400
+                {{ else }}
+                    "body": [
+                        {
+                            "cs_image": {
+                                "name:control": {
+                                    "starts_with": "HU0",
+                                    "ends_with": "{{ add ( add $idx 1 ) ( mul 2 (datastore `n_single_objects`) ) }}"
+                                },
+                                "description:control": {
+                                    "must_not_exist": true
+                                }
                             }
                         }
-                    }
-                ],
-                "statuscode": 200
+                    ],
+                    "statuscode": 200
+                {{ end }}
             },
             "store_response_gjson": {
                 "cs_image_version_{{ $idx }}": "body.0.cs_image._version"

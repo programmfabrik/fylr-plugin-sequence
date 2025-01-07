@@ -22,7 +22,8 @@
         // tests with root account
         {
             "store": {
-                "as_root": true,
+                "user": "root",
+                "expect_error": false,
                 "n_single_objects": {{ $n_objects }}
             }
         }
@@ -38,7 +39,8 @@
         // tests with test user account with minimal objecttype permissions
         , {
             "store": {
-                "as_root": false
+                "user": "testuser1",
+                "expect_error": false,
             }
         }
 
@@ -49,5 +51,18 @@
         // parallel saving of objects
         , "@setup/all.json"
         , "{{ $n_objects }}@insert_single_cs_image_parallel.json"
+
+        // tests with test user account with missing objecttype permissions
+        // test corner cases and internal errors
+        , {
+            "store": {
+                "user": "testuser2",
+                "expect_error": true,
+            }
+        }
+
+        // single editor instance saves objects
+        , "@setup/all.json"
+        , "@testcases.json"
     ]
 }

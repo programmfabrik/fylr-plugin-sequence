@@ -1,0 +1,24 @@
+[
+    {{ $accessToken := oauth2_password_token (datastore "oauth2_client") "testuser2" "testuser2" | marshal | gjson "access_token" | unmarshal }}
+    {
+        "name": "GET /session for \"testuser2\"",
+        "request": {
+            "endpoint": "user/session",
+            "method": "GET",
+            "header":{
+                "Authorization": "Bearer {{ $accessToken }}"
+            }
+        },
+        "store_response_gjson": {
+            "rootUserID": "body.user.user._id",
+            "rootUserVersion": "body.user.user._version",
+            "maxEventID": "body.current_max_event_id"
+        },
+        "store": {
+            "root-token": "Bearer {{ $accessToken }}",
+            "token_root": "Bearer {{ $accessToken }}"
+        },
+        "delay_ms": 500,
+        "timeout_ms": 5000
+    }
+]

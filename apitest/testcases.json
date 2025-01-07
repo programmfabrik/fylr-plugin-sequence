@@ -7,8 +7,10 @@
     // where the field name and description are empty, plugin must insert sequential number
     , "@insert_multi_cs_image.json"
 
-    // update the cs_image objects to test the different update settings for fields:
-    // cs_image.name must always be filled when the object is updated
-    // cs_image.description must only be filled when the object is created
-    , "@update_cs_image.json"
+    {{ if not (datastore `expect_error`) }}
+        // update the cs_image objects to test the different update settings for fields:
+        // cs_image.name must always be filled when the object is updated
+        // cs_image.description must only be filled when the object is created
+        , "@update_cs_image.json"
+    {{ end }}
 ]
