@@ -4,52 +4,78 @@ This plugin allows the automatic filling of configurable empty fields in inserte
 
 The automatic filling of empty fields can be configured [in a general way](#base-configuration) per objecttype and field, or for pool managed objects, with more complex patterns based on [pool settings](#pool-settings).
 
+## Requirements
+
+### Objecttype to store the sequences
+
 To store the current value of different sequences, this plugin uses a specialized objecttype. This objecttype **must be added to the datamodel**, and must fullfil these following requirements:
 
 * **text** field for the reference:
     * this field stores a **(unique) identifier** so the sequence can be identified by this **reference**
     * it should have a `NOT NULL` constraint, so no sequence object without a reference can exist
     * it should have a `UNIQUE` constraint, so each sequence can be identified (the plugin will use the first object that fits)
+
 * **integer** field:
     * this field stores the latest used **sequential number**
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
     * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
-## Base Configuration
+The objecttype should be as simple as possible. It is not necessary to enable pool or tag management, or make it hierarchical or enable it to be included in the main search. 
 
-### Settings for the sequence objecttype
+The objecttype must have a single simple mask which allows reading and editing of both these fields. 
+ 
+### Rights management 
+
+The plugin uses the fylr API to update the sequence and the saved objects. To authenticate the necessary requests, the plugin uses the same user session as the user which is currently logged in. 
+
+This means that the user (or group in which the user is) needs the necessary *read* and *write* rights on the special sequence objecttype and on the mask. Missing rights will cause the plugin to fail.
+
+## Setup
+
+### Base Configuration
+
+#### Settings for the sequence objecttype
+
+The specialized sequence objecttype must be selected in the base config so the plugin can use it.
 
 * **Objecttype**
     * select the objecttype that is used to store the sequences
+
 * **Reference Field**
     * text field
     * this field stores a **(unique) identifier** so the sequence can be identified by this **reference**
+
 * **Number Field**
     * integer field
     * this field stores the latest used **sequential number**
 
-### Settings for the updated fields in objects
+#### Settings for the updated fields in objects
 
-For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. In this case, the plugin will use the template to format a string that contains the sequential number. The selected fields must be text fields.
+For each objecttype one or more fields can be defined which are checked by the plugin if they are empty. If the field is empty, the plugin will use the template to format a string that contains the sequential number and update the field. The selected fields must be text fields.
 
 * **Objecttype**
     * select the objecttype to be updated
+
 * **Text Field**
     * select the text field to be updated
+
 * **Template for field content**
     * insert the template for the text that will be generated
     * the template must comply to the specific format below
+
 * **Field in object to specify the sequence**
     * optional field in the current object to be added to the sequence reference.
     * if this field is specified, a separate sequence is kept per value of this field
     * this makes it possible to set different sequential numbers depending on field values in the object
+
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
+
 * **Only fill this field if a new object is inserted**
     * if activated, this option causes updated objects (version > 1) to be skipped by the plugin
     * activate this option if you only want to fill fields once when the object is created
 
-**Template format**
+#### Template format
 
 The template must contain a placeholder for the sequential number, as well as an optional prefix and suffix. The placeholder must be in the [`printf` format style of python3](https://docs.python.org/3/library/stdtypes.html#printf-style-string-formatting) and must be compatible to format an integer value.
 
@@ -67,9 +93,9 @@ Some examples for useful placeholders inside the template are:
 | `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |
 
 
-## Pool Settings
+### Pool Settings
 
-Empty fields in objects can be filled by using templates based on pool settings. When an object is inserted/updated, based on the pool of the object, the configured templates of the pool are applied.
+Empty fields in objects can also be filled by using templates based on pool settings. When an object is inserted/updated, based on the pool of the object, the configured templates of the pool are applied.
 
 A template is a text with a combination of fixed text and [template placeholders](#template-placeholders). The placeholders are replaced by values of the pool and the pools parent, as well as sequential numbers.
 
@@ -87,7 +113,7 @@ For each pool, under the tab "Sequnce", a list of templates can be configured. E
 
 For each row in the configured list, the template is applied if the field in the object is empty. If multiple templates are defined for the same objecttype and field, only the last template is applied.
 
-### Template placeholders
+#### Template placeholders
 
 The following placeholders can be combined with free text. When the template is applied, each occurrence of each placeholder is replaced by the corresponding value from the pool or its parent pool. If there is no value for the placeholder (for example if `"%pool.reference%"` is used and there is no reference defined for the pool), the placeholder will be kept in the resulting string. Placeholders can be used multiple times.
 
@@ -109,7 +135,7 @@ The sequence placeholder `"%n%"` is replaced by the next number of the sequence 
 | `%pool.parent.name:<lang>%` | Name of the parent pool in the specified language                                                                   | Multilanguage Text |
 | `%n%`                       | Next sequential number for the specified objecttype and field                                                       | Number             |
 
-### Examples
+#### Examples
 
 * `"%pool.parent.name:de-DE% - %pool.name:de-DE% [Nr.: %n%]"`
     * `pool.parent.name:de-DE`: german name of the parent pool
@@ -124,91 +150,20 @@ The sequence placeholder `"%n%"` is replaced by the next number of the sequence 
         * `"Pool 2.3 | #16"`
         * `"Pool 3.5 | #17"`
 
-## FylrSequence
+## Usage
 
-This class handles multiple sequences using specialized objects. This means, in the datamodel there must be an additional objecttype which stores the latest used unique sequential number. Each object represents a unique sequence.
+The plugin is executed in the background whenever one of the objecttypes which have been configured in the base configuration or in a pool is inserted or updated. If one of the configured fields is empty, the plugin increments the sequence for the field and uses the template to fill the field.
 
-The plugin will not check the objecttype requirements mentioned above, but they are recommended. It iterates over the objects and updates the first object where the reference matches. If the number is not set, the plugin will always start with `1`.
+This is done after saving, and will not be visible in the editor. It will be visible after after the object has been inserted or updated in the database, and has been reindexed.
 
-The plugin uses the combination of the reference and the number to get the latest number to use as an offset, and the object ID and version if an object with the plugin reference exists.
+### Known problems and errors
 
-The plugin determines how many numbers of the sequence it will use, and update the sequence object (or create a new one if the sequence is used for the first time). If another plugin instance has updated the sequence already, the versions will not match, and the plugin tries to repeat the process again. The actual objects are only updated after the sequence update was successful.
+#### Fields are not updated
 
-### Constructor
+If fields are empty after saving, check the configuration and make sure that the correct sequence objecttype and fields are selected. Also check the templates, to make sure they have the valid format. It is also necessary that the current session has the necessary *write* rights, and that the fields are also writable in the mask that the user is allowed to use.
 
-```python
-seq = sequence.FylrSequence(
-    api_url,
-    ref,
-    access_token,
-    sequence_objecttype,
-    sequence_ref_field,
-    sequence_num_field
-)
-```
+#### Errors during saving
 
-All **parameters** are of the type `str`:
+If the sequence can not be updated, the saving of the object in the editor will fail. The plugin will display an error message in the frontend. The most common errors will mention missing rights (with a http error code of 403), in which case the rights management needs to be checked and updated. 
 
-| Parameter             | Description                                             |
-|-----------------------|---------------------------------------------------------|
-| `api_url`             | complete server (fylr) url including the `/api/v1` path |
-| `ref`                 | unique name (reference) of the sequence                 |
-| `access_token`        | OAuth2 access token for the fylr api                    |
-| `sequence_objecttype` | objecttype that stores the sequence(s)                  |
-| `sequence_ref_field`  | name of the field that stores the reference             |
-| `sequence_num_field`  | name of the field that stores the number                |
-
-### Getting the next free sequence number
-
-```python
-number = seq.get_next_number()
-```
-
-If an object with the reference `ref` exists, this method returns the next free sequence number. If no object exists yet, this method returns `1`.
-
-### Updating the sequence number
-
-This method should be called before any fylr objects are actually updated. If this method returns no error, it means that the sequence object was successfully updated. The new number should be calculated by adding the number of needed sequence values to the current value. The
-
-```python
-update_ok, error = seq.update(number)
-```
-
-**Parameter**:
-
-- `number`: integer value with the new value for the sequence
-
-**Return values**:
-
-- `update_ok`: bool value that indicates if the sequence was updated successfully
-- `error`: error message that something went really wrong, or `None`
-
-The combination of the two return values is an indicator how the plugin should proceed:
-
-- if `update_ok` is `true`, there is no problem and the plugin can use the sequential number(s)
-    - `error` will be `None` and can be ignored
-- if `update_ok` is `false`, check the `error`:
-    - if the `error` is `None`, this is an indicator that the update was not possible because another plugin instance updated the same sequence in the meantime
-        - in this case, the plugin should repeat the process and call the method `get_next_number()` again
-    - if the error is not `None`, this indicates that the sequence can not be updated because of invalid data
-
-**Errors**:
-
-- if the number for the update is invalid (less or equal the current number), the error will be an object with the following content:
-    ```python
-    {
-        'current_number': <?>,
-        'new_number': <?>
-    }
-    ```
-    - in this case, the plugin should calculate a new valid sequence number and repeat the update process
-
-- if there were any server errors during the update, the error will include the statuscode and the content of the response:
-    ```python
-    {
-        'url': '<?>',
-        'statuscode': <?>,
-        'reponse': ''
-    }
-    ```
-    - in this case, the plugin should not try to repeat the update request, but return an error to the fylr itself
+Other errors will give information about api errors, or even internal errors in the plugin. In any case, the complete error will be displayed with all available information.
