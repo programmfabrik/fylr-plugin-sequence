@@ -92,6 +92,7 @@ Some examples for useful placeholders inside the template are:
 | `%08x`           | Hexadecimal number with eight trailing zeros                                                 | `00000BB9`  |
 | `[%field%] %04d` | Value from the optional field of the sequence (e.g. `AB`) und Number with four leading zeros | `[AB] 0342` |
 
+Please note that it is not necessary to include `"` in the template definition.
 
 ### Pool Settings
 
@@ -115,9 +116,9 @@ For each row in the configured list, the template is applied if the field in the
 
 #### Template placeholders
 
-The following placeholders can be combined with free text. When the template is applied, each occurrence of each placeholder is replaced by the corresponding value from the pool or its parent pool. If there is no value for the placeholder (for example if `"%pool.reference%"` is used and there is no reference defined for the pool), the placeholder will be kept in the resulting string. Placeholders can be used multiple times.
+The following placeholders can be combined with free text. When the template is applied, each occurrence of each placeholder is replaced by the corresponding value from the pool or its parent pool. If there is no value for the placeholder (for example if `%pool.reference%` is used and there is no reference defined for the pool), the placeholder will be kept in the resulting string. Placeholders can be used multiple times.
 
-The sequence placeholder `"%n%"` is replaced by the next number of the sequence for the specified objecttype and field. The placeholder can be used multiple times in the template and each occurrence will be replaced by the same number.
+The sequence placeholder `%n%` is replaced by the next number of the sequence for the specified objecttype and field. The placeholder can be used multiple times in the template and each occurrence will be replaced by the same number.
 
 | Placeholder                 | Description                                                                                                         | Type               |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------|--------------------|
@@ -137,14 +138,14 @@ The sequence placeholder `"%n%"` is replaced by the next number of the sequence 
 
 #### Examples
 
-* `"%pool.parent.name:de-DE% - %pool.name:de-DE% [Nr.: %n%]"`
+* `%pool.parent.name:de-DE% - %pool.name:de-DE% [Nr.: %n%]`
     * `pool.parent.name:de-DE`: german name of the parent pool
     * `pool.name:de-DE`: german name of the pool
     * Examples:
         * `"Standardpool - Unterpool 1 [Nr.: 1]"`
         * `"Standardpool - Unterpool 1 [Nr.: 2]"`
 
-* `"Pool %pool.parent.id%.%pool.id% | #%n%"`
+* `Pool %pool.parent.id%.%pool.id% | #%n%`
     * Examples:
         * `"Pool 2.3 | #15"`
         * `"Pool 2.3 | #16"`
