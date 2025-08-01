@@ -72,6 +72,7 @@ For each objecttype one or more fields can be defined which are checked by the p
 
 * **Start offset of the sequence**
     * optional integer value to add to the sequential number
+    * can be used to [fix collisions in sequences](#collisions-of-generated-values)
 
 * **Only fill this field if a new object is inserted**
     * if activated, this option causes updated objects (version > 1) to be skipped by the plugin
@@ -187,12 +188,15 @@ To fix an existing sequence the next automatically generated number must be one 
         * The object has a unique reference in the form `fylr-plugin-sequence:<objecttype>.<field>`
         * For example there is an objecttype `document` which has a field `identifier`
             * In this case you should find an object with the reference `fylr-plugin-sequence:document.identifier`
+
 2. Note the next sequence number which is stored in this object, for example `12555`
+
 3. Find the object (not the objecttype which stores the sequence) which currently has the highest number
     * This can be done with the help of the search, for example searching for the latest object change, etc
     * For example the sequence for the field `identifier` in `document` has the format `ID_%08d`
     * Then you need to find the object with the highest number (including trailing zeroes)
     * For example, the object you find has the value `ID_00073421`, then the highest number is `73421`
+
 4. There are two possibilities to fix the sequence:
     * Option 1: Updating the sequence offset
         * In the [base config](#settings-for-the-updated-fields-in-objects), each sequence has an offset (default: `0`)
@@ -205,13 +209,9 @@ To fix an existing sequence the next automatically generated number must be one 
         * Set the offset to `0` (not mandatory but makes it easier)
         * Update the sequence object: set the number to `highest number + offset + 1`
             * In this case, `73422` or higher
+
 5. Save a new `document` object where the field `identifier` is empty
     * In both cases, the next generated string is `ID_00073422`
         * This will not collide with the object with the (currently) highest number
     * The plugin will always use the sum of the number stored in the sequence object and the offset as the new number
-    * The next number which will be generated can always be controlled by
-            * updating the offset
-            * or updating the saved value
-            * or a combination of both
-
-
+    * The next number which will be generated can always be controlled by updating the offset, updating the saved value, or a combination of both
