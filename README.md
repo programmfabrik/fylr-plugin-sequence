@@ -4,6 +4,8 @@ This plugin allows the automatic filling of configurable empty fields in inserte
 
 The automatic filling of empty fields can be configured [in a general way](#base-configuration) per objecttype and field, or for pool managed objects, with more complex patterns based on [pool settings](#pool-settings).
 
+Collisions with existing data can happen, but [can be fixed for each sequence](#collisions-of-generated-values).
+
 ## Requirements
 
 ### Objecttype to store the sequences
@@ -168,3 +170,48 @@ If fields are empty after saving, check the configuration and make sure that the
 If the sequence can not be updated, the saving of the object in the editor will fail. The plugin will display an error message in the frontend. The most common errors will mention missing rights (with a http error code of 403), in which case the rights management needs to be checked and updated. 
 
 Other errors will give information about api errors, or even internal errors in the plugin. In any case, the complete error will be displayed with all available information.
+
+#### Collisions of generated values
+
+The plugin can not check if a formatted string (based on a sequence number) which is written into a field is unique. It only generates a unique sequence number, but if for example a generated string already exists in the affected field (maybe it was manually set before), the duplicate values will collide. This can cause duplicate data, or in case of a unique constraint on the field, it will cause an api error when the object is saved. The plugin can not resolve this automatically.
+
+In general, any field which is also written by the plugin, *should never be written manually*!
+
+If existing data in the field(s) collides with generated data, and saving the object fails, the sequence can be "repaired" manually.
+
+To fix an existing sequence the next automatically generated number must be one which will not collide with any existing data. Please follow these steps (values are only examples, apply this to your instance and settings):
+
+1. Find the object which belongs to the affected sequence
+    * The objecttype is defined in the [base config](#settings-for-the-sequence-objecttype)
+    * In this objecttype, find the object which stores the sequence for the affected field:
+        * The object has a unique reference in the form `fylr-plugin-sequence:<objecttype>.<field>`
+        * For example there is an objecttype `document` which has a field `identifier`
+            * In this case you should find an object with the reference `fylr-plugin-sequence:document.identifier`
+2. Note the next sequence number which is stored in this object, for example `12555`
+3. Find the object (not the objecttype which stores the sequence) which currently has the highest number
+    * This can be done with the help of the search, for example searching for the latest object change, etc
+    * For example the sequence for the field `identifier` in `document` has the format `ID_%08d`
+    * Then you need to find the object with the highest number (including trailing zeroes)
+    * For example, the object you find has the value `ID_00073421`, then the highest number is `73421`
+4. There are two possibilities to fix the sequence:
+    * Option 1: Updating the sequence offset
+        * In the [base config](#settings-for-the-updated-fields-in-objects), each sequence has an offset (default: `0`)
+        * This value is added to the sequence number before it is written into the field
+        * Calculate a new offset which will result in a higher number than the current highest numner:
+            * `offset = highest number - offset + 1`
+            * `offset = 73421 - 12555 + 1 = 60867`
+        * Update the new offset of (at least) `60866` in the base config and save
+    * Option 2: Updating the sequence object
+        * Set the offset to `0` (not mandatory but makes it easier)
+        * Update the sequence object: set the number to `highest number + offset + 1`
+            * In this case, `73422` or higher
+5. Save a new `document` object where the field `identifier` is empty
+    * In both cases, the next generated string is `ID_00073422`
+        * This will not collide with the object with the (currently) highest number
+    * The plugin will always use the sum of the number stored in the sequence object and the offset as the new number
+    * The next number which will be generated can always be controlled by
+            * updating the offset
+            * or updating the saved value
+            * or a combination of both
+
+
