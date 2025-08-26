@@ -1,6 +1,6 @@
 # fylr-plugin-sequence
 
-This plugin allows the automatic filling of configurable empty fields in inserted objects based on sequential numbers.
+This plugin **for fylr** allows the automatic filling of configurable empty fields in inserted objects based on sequential numbers.
 
 The automatic filling of empty fields can be configured [in a general way](#base-configuration) per objecttype and field, or for pool managed objects, with more complex patterns based on [pool settings](#pool-settings).
 
