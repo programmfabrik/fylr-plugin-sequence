@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+import re
 import fylr_lib_plugin_python3.util as util
 import sequence
 
@@ -69,10 +70,10 @@ class TemplatesManager(object):
                     for lang in l10n.keys():
 
                         v = l10n[lang]
-                        if v is None:
+                        if not v:
                             continue
                         v = str(v).strip()
-                        if len(v) < 1:
+                        if not v:
                             continue
 
                         self.pool_mappings[pool_id][f'{sub_k}:{lang}'] = v
@@ -82,10 +83,10 @@ class TemplatesManager(object):
                             continue
 
                         v = l10n[lang]
-                        if v is None:
+                        if not v:
                             continue
                         v = str(v).strip()
-                        if len(v) < 1:
+                        if not v:
                             continue
 
                         self.pool_mappings[pool_id][sub_k] = v
@@ -94,10 +95,10 @@ class TemplatesManager(object):
                     continue
 
                 v = util.get_json_value(pool_info[p_id], p)
-                if v is None:
+                if not v:
                     continue
                 v = str(v).strip()
-                if len(v) < 1:
+                if not v:
                     continue
                 self.pool_mappings[pool_id][k] = v
 
@@ -114,7 +115,10 @@ class TemplatesManager(object):
                 self.pool_mappings[pool_id][k],
             )
 
-        if '%n%' not in template:
+        has_percent_n = '%n%' in template
+        has_format_spec = bool(re.search(r'%-?\d*\.?\d*[diouxX]', template))
+
+        if not has_percent_n and not has_format_spec:
             return template
 
         # check if there is an offset defined
@@ -137,7 +141,10 @@ class TemplatesManager(object):
             self.sequence_num_field,
             pool_id=pool_id,
         )
-        if sequence_offset is not None:
-            template = template.replace('%n%', str(start_offset + sequence_offset))
+        if sequence_offset:
+            if has_percent_n:
+                template = template.replace('%n%', str(start_offset + sequence_offset))
+            else:
+                template = template % (start_offset + sequence_offset)
 
         return template
