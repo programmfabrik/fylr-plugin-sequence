@@ -41,7 +41,9 @@ jobs:
 
       - name: Build and Package
         shell: bash
-        run: make zip
+        run: |
+          export RELEASE_TAG=${{ steps.get_version.outputs.VERSION }}
+          make zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
