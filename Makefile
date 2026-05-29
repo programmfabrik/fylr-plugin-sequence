@@ -1,3 +1,5 @@
+PLUGIN_NAME = fylr-plugin-sequence
+
 # config for Google CSV spreadsheet
 L10N = l10n/fylr-plugin-sequence.csv
 GKEY = 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
@@ -9,9 +11,9 @@ JS = src/webfrontend/fylr-plugin-sequence.js
 COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee \
                src/webfrontend/SequencePluginPoolNode.coffee \
 			   src/webfrontend/SequencePluginPool.coffee
-PLUGIN_NAME = fylr-plugin-sequence
-BUILD_DIR = build
 
+BUILD_DIR = build
+BUILD_INFO = build-info.json
 ZIP_NAME ?= "${PLUGIN_NAME}.zip"
 
 help:
@@ -22,10 +24,10 @@ google-csv: ## get loca CSV from google
 
 all: build ## build all
 
-build: clean code ## build all (creates build folder)
+build: clean code buildinfojson ## build all (creates build folder)
 	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)
 	cp manifest.master.yml $(BUILD_DIR)/$(PLUGIN_NAME)/manifest.yml
-	cp -r src/server l10n $(BUILD_DIR)/$(PLUGIN_NAME)
+	cp -r src/server l10n $(BUILD_INFO) $(BUILD_DIR)/$(PLUGIN_NAME)
 	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
 	cp -r $(JS) $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
 
@@ -38,6 +40,7 @@ clean: ## clean build files
 	rm -rf src/server/fylr_lib_plugin_python3/__pycache__/
 	rm -f src/webfrontend/*.coffee.js
 	rm -f $(JS)
+	rm -f $(BUILD_INFO)
 	rm -rf $(BUILD_DIR)
 
 apitest-dep:
@@ -62,3 +65,16 @@ ${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
 %.coffee.js: %.coffee
 	coffee -b -p --compile "$^" > "$@" || ( rm -f "$@" ; false )
 
+buildinfojson:
+	repo=`git remote get-url origin | sed -e 's/\.git$$//' -e 's#.*[/\\]##'` ;\
+	rev=`git show --no-patch --format=%H` ;\
+	lastchanged=`git show --no-patch --format=%ad --date=format:%Y-%m-%dT%T%z` ;\
+	builddate=`date +"%Y-%m-%dT%T%z"` ;\
+	release=$(if $(strip $(RELEASE_TAG)),'"$(RELEASE_TAG)"','null') ;\
+	echo '{' > $(BUILD_INFO) ;\
+	echo '  "repository": "'$$repo'",' >> $(BUILD_INFO) ;\
+	echo '  "rev": "'$$rev'",' >> $(BUILD_INFO) ;\
+	echo '  "release": '$$release',' >> $(BUILD_INFO) ;\
+	echo '  "lastchanged": "'$$lastchanged'",' >> $(BUILD_INFO) ;\
+	echo '  "builddate": "'$$builddate'"' >> $(BUILD_INFO) ;\
+	echo '}' >> $(BUILD_INFO)
