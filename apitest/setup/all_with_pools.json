@@ -1,0 +1,31 @@
+[
+    "@get_settings.json"
+    ,"@root_session.json"
+    ,"@purge.json"
+    // get settings again — after purge we have a new db instance id
+    ,"@get_settings.json"
+    ,"@root_session.json"
+    ,"@POST_datamodel_commit.json"
+    ,"@../plugin/all.json"
+    ,"@post_config.json"
+    // always create all test users so their IDs are available for pool ACL setup
+    ,"@create_testusers.json"
+    // set cs_image/sequence permissions for testuser1 (existing)
+    ,"@update_objecttype_permissions.json"
+    // set inventory/sequence permissions for testuser1 and testuser3
+    ,"@update_inventory_permissions.json"
+    // create parent pool (with sequence_plugin custom_data); stores parent_pool_id
+    // split into two files so the child pool file can reference parent_pool_id from the store
+    ,"@create_parent_pool.json"
+    // create child pool referencing parent_pool_id; stores child_pool_id
+    ,"@create_child_pool.json"
+    // wait (as root) until both pools appear in POST /api/v1/search?type=pool
+    // before switching users — the plugin relies on the search index being up to date
+    ,"@wait_for_pool_index.json"
+    // switch to the session of the test user for this run
+    {{ if eq (datastore `user`) "testuser1" }}
+        ,"@testuser1_session.json"
+    {{ else if eq (datastore `user`) "testuser3" }}
+        ,"@testuser3_session.json"
+    {{ end }}
+]

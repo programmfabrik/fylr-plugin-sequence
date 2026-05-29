@@ -1,0 +1,86 @@
+[
+    // Insert an inventory object into the child pool.
+    // The child pool has NO own custom_data in sequence_plugin.
+    // pool.py loads the child pool, walks its _path, finds the parent pool's custom_data,
+    // and inherits the template "INV-%pool.shortname%-%04d" for the child pool entry.
+    // templates.py applies the template with the CHILD pool's values:
+    //   %pool.shortname% → "child"   (child pool's own shortname, not the parent's)
+    //   %04d            → separate per-pool sequence, starts at 1 for child pool
+    // Expected inv_nr: "INV-child-0001"
+    {
+        "name": "POST /api/v1/db/inventory into child pool: inherited template uses child pool values",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_version": 1,
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `child_pool_id` }}
+                            }
+                        },
+                        "inv_nr": null,
+                        "title": "Test child pool inventory item"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "inventory": {
+                        // inherited template from parent pool, but %pool.shortname% resolves
+                        // to the child pool's own shortname and uses a separate sequence counter
+                        "inv_nr": "INV-child-0001"
+                    }
+                }
+            ]
+        }
+    },
+    // A second object in the child pool to confirm the per-pool sequence counter increments
+    // independently from the parent pool counter.
+    {
+        "name": "POST /api/v1/db/inventory into child pool (#2): child pool sequence counter is independent",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_version": 1,
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `child_pool_id` }}
+                            }
+                        },
+                        "inv_nr": null,
+                        "title": "Test child pool inventory item 2"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "inventory": {
+                        "inv_nr": "INV-child-0002"
+                    }
+                }
+            ]
+        }
+    }
+]

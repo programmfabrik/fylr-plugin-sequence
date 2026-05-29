@@ -1,0 +1,54 @@
+[
+    // After pool creation, the pools must be indexed before the plugin can find them via
+    // POST /api/v1/search?type=pool.  Poll as root until both parent and child pool appear
+    // in search results.  Uses collect_response to retry until the expected count is reached.
+    {
+        "name": "Wait for parent pool and child pool to be indexed (search type=pool)",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "search",
+            "method": "POST",
+            "body": {
+                "type": "pool",
+                "search": [
+                    {
+                        "bool": "must",
+                        "type": "in",
+                        "fields": ["pool._id"],
+                        "in": [
+                            {{ datastore `parent_pool_id` }},
+                            {{ datastore `child_pool_id` }}
+                        ]
+                    }
+                ]
+            }
+        },
+        "response": {
+            "body": {
+                "count": 2,
+                "objects:control": {
+                    "no_extra": true
+                },
+                "objects": [
+                    {
+                        "_basetype": "pool",
+                        "pool": {
+                            "_id": {{ datastore `parent_pool_id` }}
+                        }
+                    },
+                    {
+                        "_basetype": "pool",
+                        "pool": {
+                            "_id": {{ datastore `child_pool_id` }},
+                            "_id_parent": {{ datastore `parent_pool_id` }}
+                        }
+                    }
+                ]
+            }
+        },
+        "timeout_ms": 120000,
+        "delay_ms": 1000
+    }
+]

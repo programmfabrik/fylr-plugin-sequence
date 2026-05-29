@@ -1,0 +1,43 @@
+[
+    // Update the first inserted inventory object.
+    // only_insert=true on the pool template means inv_nr must NOT be re-filled on update.
+    // inventory_id_0 and inventory_version_0 are stored by insert_single_inventory.json.
+    {
+        "name": "POST /api/v1/db/inventory update (#0): only_insert=true, inv_nr must stay unchanged",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_id": {{ datastore `inventory_id_0` }},
+                        "_version": {{ add 1 (datastore `inventory_version_0`) }},
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `parent_pool_id` }}
+                            }
+                        },
+                        "title": "Updated inventory item 1",
+                        "inv_nr": "INV-parent-0001"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "inventory": {
+                        // inv_nr must still be the original value since only_insert=true
+                        "inv_nr": "INV-parent-0001"
+                    }
+                }
+            ]
+        }
+    }
+]
