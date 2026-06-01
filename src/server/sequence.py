@@ -4,9 +4,10 @@ import fylr_lib_plugin_python3.util as util
 import json
 import time
 
+PLUGIN_NAME = 'fylr-plugin-sequence'
+
 
 def get_next_offset(
-    plugin_name,
     api_url,
     access_token,
     objecttype,
@@ -25,9 +26,9 @@ def get_next_offset(
     # 4:    if the sequence was updated, update and return the objects, break loop
 
     if not pool_id:
-        sequence_ref = f'{plugin_name}:{objecttype}.{column}'
+        sequence_ref = f'{PLUGIN_NAME}:{objecttype}.{column}'
     else:
-        sequence_ref = f'{plugin_name}:poolid={pool_id}:{objecttype}.{column}'
+        sequence_ref = f'{PLUGIN_NAME}:poolid={pool_id}:{objecttype}.{column}'
 
     seq = FylrSequence(
         api_url,
@@ -127,8 +128,6 @@ class FylrSequence(object):
         return resp, statuscode
 
     def get_next_number(self) -> int:
-        global PLUGIN_NAME
-
         path = f'db/{self.sequence_objecttype}/{self.mask}/list'
         api_resp, statuscode = self.get_from_api(path)
 
@@ -209,8 +208,6 @@ class FylrSequence(object):
         return self.current_number
 
     def update(self, new_number: int) -> bool:
-        global PLUGIN_NAME
-
         if new_number <= self.current_number:
             # no update, caller should repeat
             return False
@@ -255,8 +252,6 @@ class FylrSequence(object):
             )
 
     def get_sequence_objecttype_mask(self):
-        global PLUGIN_NAME
-
         resp, statuscode = self.get_from_api('mask/CURRENT')
 
         hint = 'get info about sequence objecttype from get /api/v1/mask/CURRENT'

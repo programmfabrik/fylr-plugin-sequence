@@ -2,10 +2,10 @@
 
 import json
 import fylr_lib_plugin_python3.util as util
+import sequence
 
 
 def __search_pool_ids(api_url, access_token, pool_ids):
-    global PLUGIN_NAME
     if not pool_ids:
         return []
 
@@ -39,7 +39,7 @@ def __search_pool_ids(api_url, access_token, pool_ids):
 
         # not an api error, some other response
         util.return_error_response_with_parameters(
-            error_code=f'error.{PLUGIN_NAME}',
+            error_code=f'error.{sequence.PLUGIN_NAME}',
             error_msg=f'{hint}: unexpected response',
             parameters={
                 'response': response,

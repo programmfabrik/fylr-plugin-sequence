@@ -4,7 +4,6 @@ import re
 import fylr_lib_plugin_python3.util as util
 import sequence
 
-PLUGIN_NAME = 'fylr-plugin-sequence'
 
 
 class TemplatesManager(object):
@@ -131,7 +130,6 @@ class TemplatesManager(object):
         # special case: no value from pools but sequential number
         # get a new number from the sequence
         sequence_offset = sequence.get_next_offset(
-            PLUGIN_NAME,
             self.api_url,
             self.access_token,
             objecttype,

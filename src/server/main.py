@@ -10,10 +10,6 @@ import json
 import pool
 import templates
 
-global PLUGIN_NAME
-PLUGIN_NAME = 'fylr-plugin-sequence'
-
-
 if __name__ == '__main__':
 
     orig_data = json.loads(sys.stdin.read())
@@ -29,7 +25,7 @@ if __name__ == '__main__':
     api_url = util.get_json_value(orig_data, 'info.api_url')
     if not api_url:
         util.return_error_response_with_parameters(
-            error_code=f'error.{PLUGIN_NAME}',
+            error_code=f'error.{sequence.PLUGIN_NAME}',
             error_msg='required parameter missing in info json',
             parameters={
                 'parameter': 'info.api_url',
@@ -41,7 +37,7 @@ if __name__ == '__main__':
     access_token = util.get_json_value(orig_data, 'info.api_user_access_token')
     if not access_token:
         util.return_error_response_with_parameters(
-            error_code=f'error.{PLUGIN_NAME}',
+            error_code=f'error.{sequence.PLUGIN_NAME}',
             error_msg='required parameter missing in info json',
             parameters={
                 'parameter': 'info.api_user_access_token',
@@ -50,7 +46,7 @@ if __name__ == '__main__':
 
     # load base config for this plugin
     # directly return the original data if there are any configurations missing
-    plugin_config_path = f'info.config.plugin.{PLUGIN_NAME}.config'
+    plugin_config_path = f'info.config.plugin.{sequence.PLUGIN_NAME}.config'
 
     # load ordered list of database languages from the base config (api/v1/config/system)
     database_languages = []
@@ -189,7 +185,7 @@ if __name__ == '__main__':
         )
         if not all_pools_found:
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
+                error_code=f'error.{sequence.PLUGIN_NAME}',
                 error_msg='not all pools were found',
                 parameters={
                     'pool_ids_in_objects': len(pool_ids),
@@ -263,7 +259,7 @@ if __name__ == '__main__':
             # 3:    try to update the sequence object (protected by object version)
             # 4:    if the sequence was updated, update and return the objects, break loop
 
-            sequence_ref = f'{PLUGIN_NAME}:{objecttype}.{column}'
+            sequence_ref = f'{sequence.PLUGIN_NAME}:{objecttype}.{column}'
 
             obj_field_value = None
             if obj_field:
