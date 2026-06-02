@@ -4,9 +4,10 @@ import fylr_lib_plugin_python3.util as util
 import json
 import time
 
+PLUGIN_NAME = 'fylr-plugin-sequence'
+
 
 def get_next_offset(
-    plugin_name,
     api_url,
     access_token,
     objecttype,
@@ -24,10 +25,10 @@ def get_next_offset(
     # 3:    try to update the sequence object (protected by object version)
     # 4:    if the sequence was updated, update and return the objects, break loop
 
-    if pool_id is None:
-        sequence_ref = f'{plugin_name}:{objecttype}.{column}'
+    if not pool_id:
+        sequence_ref = f'{PLUGIN_NAME}:{objecttype}.{column}'
     else:
-        sequence_ref = f'{plugin_name}:poolid={pool_id}:{objecttype}.{column}'
+        sequence_ref = f'{PLUGIN_NAME}:poolid={pool_id}:{objecttype}.{column}'
 
     seq = FylrSequence(
         api_url,
@@ -49,18 +50,7 @@ def get_next_offset(
         offset = seq.get_next_number()
 
         # update the new sequence to check if it has not been changed by another instance
-        update_ok, error = seq.update(offset + 1)
-
-        if error is not None:
-            # indicator that something went wrong and the plugin should just return an error message
-            util.return_error_response(
-                util.dumpjs(
-                    {
-                        'error': 'could not update sequence',
-                        'reason': error,
-                    }
-                )
-            )
+        update_ok = seq.update(offset + 1)
 
         if not update_ok:
             # sleep for 1 second and try again to get and update the sequence
@@ -137,20 +127,40 @@ class FylrSequence(object):
         )
         return resp, statuscode
 
-    @util.handle_exceptions
     def get_next_number(self) -> int:
         path = f'db/{self.sequence_objecttype}/{self.mask}/list'
         api_resp, statuscode = self.get_from_api(path)
 
+        hint = 'sequence: get next number'
+
         if statuscode != 200:
-            raise Exception(f'invalid response: {statuscode} - {api_resp}')
+            # if it is an api error return it to fylr
+            util.return_if_api_error(api_resp, hint)
 
-        if len(api_resp) < 1:
-            raise Exception('invalid response: expected non-empty body')
+            util.return_error_response_with_parameters(
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
+                parameters={
+                    'response': api_resp,
+                    'statuscode': statuscode,
+                    'hint': hint,
+                },
+            )
 
-        objects = json.loads(api_resp)
+        objects = []
+        try:
+            objects = json.loads(api_resp)
+        except:
+            objects = None
         if not isinstance(objects, list):
-            raise Exception(f'invalid response: expected array - {api_resp}')
+            util.return_error_response_with_parameters(
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
+                parameters={
+                    'response': api_resp,
+                    'hint': hint,
+                },
+            )
 
         sequence_exists = False
         for obj in objects:
@@ -177,7 +187,7 @@ class FylrSequence(object):
                 obj,
                 f'{self.sequence_objecttype}.{self.sequence_num_field}',
             )
-            if n is None or n < 1:
+            if not n:
                 n = 1
 
             # update offset, object id and version
@@ -199,21 +209,19 @@ class FylrSequence(object):
         # return the next free number of the sequence
         return self.current_number
 
-    @util.handle_exceptions
-    def update(self, new_number: int):
+    def update(self, new_number: int) -> bool:
+        hint = 'update sequence'
 
         if new_number <= self.current_number:
-            return False, {
-                'current_number': self.current_number,
-                'new_number': new_number,
-            }
+            # no update, caller should repeat
+            return False
 
         new_obj = {
             '_objecttype': self.sequence_objecttype,
-            '_mask': self.mask if self.mask is not None else '_all_fields',
+            '_mask': self.mask if self.mask else '_all_fields',
             self.sequence_objecttype: {
                 '_id': self.obj_id,
-                '_version': 1 if self.obj_id is None else self.version + 1,
+                '_version': 1 if not self.obj_id else self.version + 1,
                 self.sequence_num_field: new_number,
                 self.sequence_ref_field: self.ref,
             },
@@ -229,30 +237,58 @@ class FylrSequence(object):
         if statuscode == 200:
             # everything ok
             self.version += 1
-            return True, None
+            return True
 
         elif statuscode == 400:
             # some api error, maybe wrong version
             # => caller should repeat the process, and get the new current sequence number
-            return False, None
+            return False
 
-        if statuscode != 200:
-            raise Exception(f'invalid response: {statuscode} - {resp}')
+        else:
+            # check if it is another api error, if then return
+            util.return_if_api_error(resp, hint)
 
-    @util.handle_exceptions
+            # not an (expected) api error, some other response
+            util.return_error_response_with_parameters(
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
+                parameters={
+                    'response': resp,
+                    'statuscode': statuscode,
+                    'hint': hint,
+                },
+            )
+
     def get_sequence_objecttype_mask(self):
         resp, statuscode = self.get_from_api('mask/CURRENT')
 
+        hint = 'get info about sequence objecttype from get /api/v1/mask/CURRENT'
+
         if statuscode != 200:
-            raise Exception(
-                f'could not get /api/v1/mask/CURRENT: statuscode {statuscode}, response: {resp}'
+            util.return_if_api_error(resp, hint)
+
+            # not an api error, some other response
+            util.return_error_response_with_parameters(
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
+                parameters={
+                    'response': resp,
+                    'statuscode': statuscode,
+                    'hint': hint,
+                },
             )
 
         content = json.loads(resp)
         masks = util.get_json_value(content, 'masks')
         if not isinstance(masks, list):
-            raise Exception(
-                f'could not get masks from /api/v1/mask/CURRENT: response: {resp}'
+            util.return_error_response_with_parameters(
+                error_code=f'{PLUGIN_NAME}.error.no_standard_mask_for_ot',
+                error_msg=f'could not find standard mask for objecttype {self.sequence_objecttype})',
+                parameters={
+                    'response': resp,
+                    'statuscode': statuscode,
+                    'sequence_objecttype': self.sequence_objecttype,
+                },
             )
 
         for mask in masks:
@@ -270,6 +306,12 @@ class FylrSequence(object):
 
             return mask_name
 
-        raise Exception(
-            f'could not find standard mask for objecttype {self.sequence_objecttype} from /api/v1/mask/CURRENT'
+        util.return_error_response_with_parameters(
+            error_code=f'{PLUGIN_NAME}.error.no_standard_mask_for_ot',
+            error_msg=f'could not find standard mask for objecttype {self.sequence_objecttype})',
+            parameters={
+                'response': resp,
+                'statuscode': statuscode,
+                'sequence_objecttype': self.sequence_objecttype,
+            },
         )

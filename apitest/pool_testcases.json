@@ -1,0 +1,10 @@
+[
+    // Test pool-based template config in sequence_plugin custom_data of pools.
+    // Run as testuser1 (full pool rights) to verify the happy paths:
+    //   1. direct pool custom_data → parent pool template applied, counter increments
+    //   2. only_insert=true        → inv_nr not re-set on update (store_response_gjson from insert)
+    //   3. inherited custom_data   → child pool inherits parent's template, uses its own shortname
+    "@insert_single_inventory.json"
+    ,"@update_single_inventory.json"
+    ,"@insert_inventory_child_pool.json"
+]

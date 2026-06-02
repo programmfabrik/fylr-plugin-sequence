@@ -22,13 +22,13 @@ To store the current value of different sequences, this plugin uses a specialize
     * it should have a `NOT NULL` constraint, so no sequence object without a number can exist
     * it must **not** have a `UNIQUE` constraint, because the sequential number could collide with other unrelated sequences
 
-The objecttype should be as simple as possible. It is not necessary to enable pool or tag management, or make it hierarchical or enable it to be included in the main search. 
+The objecttype should be as simple as possible. It is not necessary to enable pool or tag management, or make it hierarchical or enable it to be included in the main search.
 
-The objecttype must have a single simple mask which allows reading and editing of both these fields. 
- 
-### Rights management 
+The objecttype must have a single simple mask which allows reading and editing of both these fields.
 
-The plugin uses the fylr API to update the sequence and the saved objects. To authenticate the necessary requests, the plugin uses the same user session as the user which is currently logged in. 
+### Rights management
+
+The plugin uses the fylr API to update the sequence and the saved objects. To authenticate the necessary requests, the plugin uses the same user session as the user which is currently logged in.
 
 This means that the user (or group in which the user is) needs the necessary *read* and *write* rights on the special sequence objecttype and on the mask. Missing rights will cause the plugin to fail.
 
@@ -168,9 +168,49 @@ If fields are empty after saving, check the configuration and make sure that the
 
 #### Errors during saving
 
-If the sequence can not be updated, the saving of the object in the editor will fail. The plugin will display an error message in the frontend. The most common errors will mention missing rights (with a http error code of 403), in which case the rights management needs to be checked and updated. 
+If the sequence can not be updated, the saving of the object in the editor will fail. The plugin will display an error message in the frontend. The most common errors will mention missing rights (with a http error code of 403), in which case the rights management needs to be checked and updated. All api errors which come from fylr as a response to a request (e.g. a failed update) will be passed through as they are.
 
-Other errors will give information about api errors, or even internal errors in the plugin. In any case, the complete error will be displayed with all available information.
+Other error responses will give information about internal errors in the plugin. In any case, the complete error will be displayed with all available information. The following errors are thrown by the plugin itself:
+
+* `fylr-plugin-sequence.error.not_all_pools_found`
+    * example error message:
+      ```
+      The search for pools did not return all expected pools. Searched for 3 ids from objects
+      ```
+    * explanation:
+        * if pool managed objects are passed to the plugin, the plugin collects the pool ids and loads the detailled information using the search
+        * of not for all pool ids a pool is returned, or if parent pools are missing in the search response, the plugin can not load all necessary pool information
+    * possible causes and fixes:
+        * most likely the rights management for the user is too strict, make sure that the user has read rights on all relevant pools and their parent pools
+        * also possible but less likely: not all pools are currently indexed, repeat the request later when the indexing is done
+
+* `fylr-plugin-sequence.error.no_standard_mask_for_ot`
+    * example error message:
+      ```
+      Could not find standard mask for objecttype sequenz
+      ```
+    * explanation:
+        * to update/create the sequence objecttype probperly, the plugin needs to load mask information
+    * possible causes:
+        * for the objecttype, the masks are not returned in the expected format
+        * if this happens, this is a api problem in fylr (this is only a theoretical problem end very unlikely)
+
+* `fylr-plugin-sequence.error.unexpected_fylr_response`
+    * example error message:
+      ```
+      Unexpected response from fylr. Hint from plugin: "sequence: get next number".
+
+      Statuscode: %(statuscode)s
+
+      Response: [...]
+      ```
+    * explanation:
+        * this error returns the response text for any other unspecific response from fylr
+        * it includes responses with unexpected content
+        * or errors which are not a proper fylr api error
+    * possible causes and fixes:
+        * this is not very likely, but can happen for any reason
+        * the response from fylr is included and gives a hint for the actual problem
 
 #### Collisions of generated values
 

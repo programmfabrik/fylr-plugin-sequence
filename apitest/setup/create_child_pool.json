@@ -1,0 +1,70 @@
+[
+    // Create a child pool with no own sequence_plugin custom_data.
+    // pool.py walks the pool's _path and inherits the parent pool's template.
+    // templates.py resolves %pool.shortname% to the CHILD pool's own shortname.
+    // Only testuser1 has rights here to test the inherited-template happy path.
+    {
+        "name": "POST /api/v1/pool: create child pool (no own custom_data, inherits from parent)",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "pool",
+            "method": "POST",
+            "body": [
+                {
+                    "_basetype": "pool",
+                    "pool": {
+                        "_id": null,
+                        "_version": 1,
+                        "_id_parent": {{ datastore `parent_pool_id` }},
+                        "shortname": "child",
+                        "name": {
+                            "en-US": "Child Pool"
+                        }
+                    },
+                    "_acl": [
+                        {
+                            "who": {
+                                "_basetype": "user",
+                                "user": {
+                                    "_id": {{ datastore `testuser1_id` }}
+                                }
+                            },
+                            "sticky": false,
+                            "active": true,
+                            "rights": {
+                                "bag_read": {},
+                                "create": {
+                                    "objecttype_ids": [
+                                        249
+                                    ]
+                                },
+                                "delete": {
+                                    "_grantable": false,
+                                    "objecttype_ids": [
+                                        249
+                                    ]
+                                },
+                                "mask": {
+                                    "mask_ids": {
+                                        "249": [
+                                            "standard"
+                                        ]
+                                    }
+                                }
+                            },
+                        }
+                    ],
+                    "_private_acl": false
+                }
+            ]
+        },
+        "response": {
+            "statuscode": 200
+        },
+        "store_response_gjson": {
+            "child_pool_id": "body.0.pool._id"
+        }
+    }
+]

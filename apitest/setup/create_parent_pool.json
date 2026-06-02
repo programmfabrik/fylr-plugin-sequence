@@ -1,0 +1,82 @@
+[
+    // Create a parent pool with sequence_plugin custom_data for the inventory objecttype.
+    // Only testuser1 gets pool rights (read + create + write).
+    // testuser3 has no ACL entry here so the pool does not appear in
+    // POST /api/v1/search?type=pool when called with testuser3's access token,
+    // which triggers the "not all pools were found" error path in pool.py.
+    {
+        "name": "POST /api/v1/pool: create parent pool",
+        "request": {
+            "header_from_store": {
+                "Authorization": "root-token"
+            },
+            "endpoint": "pool",
+            "method": "POST",
+            "body": [
+                {
+                    "_basetype": "pool",
+                    "pool": {
+                        "_id": null,
+                        "_version": 1,
+                        "_id_parent": 1,
+                        "shortname": "parent",
+                        "name": {
+                            "en-US": "Parent Pool"
+                        },
+                        "custom_data": {
+                            "sequence_plugin": [
+                                {
+                                    "objecttype": "inventory",
+                                    "field": "inventory.inv_nr",
+                                    "template": "INV-%pool.shortname%-%04d",
+                                    "start_offset": 0,
+                                    "only_insert": true
+                                }
+                            ]
+                        }
+                    },
+                    "_acl": [
+                        {
+                            "who": {
+                                "_basetype": "user",
+                                "user": {
+                                    "_id": {{ datastore `testuser1_id` }}
+                                }
+                            },
+                            "sticky": false,
+                            "active": true,
+                            "rights": {
+                                "bag_read": {},
+                                "create": {
+                                    "objecttype_ids": [
+                                        249
+                                    ]
+                                },
+                                "delete": {
+                                    "_grantable": false,
+                                    "objecttype_ids": [
+                                        249
+                                    ]
+                                },
+                                "mask": {
+                                    "mask_ids": {
+                                        "249": [
+                                            "standard"
+                                        ]
+                                    }
+                                }
+                            },
+                        }
+                    ],
+                    "_private_acl": false
+                }
+            ]
+        },
+        "response": {
+            "statuscode": 200
+        },
+        "store_response_gjson": {
+            "parent_pool_id": "body.0.pool._id"
+        }
+    }
+]

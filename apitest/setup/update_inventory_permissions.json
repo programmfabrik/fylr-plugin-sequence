@@ -1,0 +1,189 @@
+{
+    "name": "POST /api/v1/objecttype: inventory permissions for testuser1 and testuser3",
+    "request": {
+        "header_from_store": {
+            "Authorization": "root-token"
+        },
+        "body": [
+            // testuser1: full create+write access to inventory objects and sequence objects
+            {
+                "_basetype": "objecttype",
+                "objecttype": {
+                    "_id": 249,
+                    "_version": 2,
+                    "name": "inventory",
+                    "mapping_image_export": "none",
+                    "mapping_image_import": "none",
+                    "mapping_dc_export": "none",
+                    "show_in_collections": false,
+                    "show_in_facet_grouping": false,
+                    "description": {},
+                    "custom_data": {}
+                },
+                "_standard_masks": null,
+                "_export_asset_filenames": {},
+                "_acl": [
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser1_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "create": {},
+                            "write": {
+                                "_grantable": false
+                            },
+                            "mask": {
+                                "mask_ids": {
+                                    "249": [
+                                        "standard",
+                                        73
+                                    ]
+                                }
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    },
+                    // testuser3: can create inventory objects (to trigger plugin)
+                    // but pool read rights are restricted via pool ACL → plugin fails to find pool
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser3_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "create": {},
+                            "mask": {
+                                "mask_ids": {
+                                    "249": [
+                                        "standard",
+                                        73
+                                    ]
+                                }
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    }
+                ],
+                "_private_transitions": false,
+                "_transitions": [],
+                "_private_tags": null,
+                "_tags": null,
+                "_maskfilters": {},
+                "_columnfilters": [],
+                "_filename_replacements": {}
+            },
+            // testuser3 also needs sequence rights so the plugin can maintain the counter
+            // (the error path we want to test is specifically pool access, not sequence access)
+            {
+                "_basetype": "objecttype",
+                "objecttype": {
+                    "_id": 248,
+                    "_version": 3,
+                    "name": "sequence",
+                    "mapping_image_export": "none",
+                    "mapping_image_import": "none",
+                    "mapping_dc_export": "none",
+                    "show_in_collections": false,
+                    "show_in_facet_grouping": false,
+                    "description": {},
+                    "custom_data": {}
+                },
+                "_standard_masks": null,
+                "_export_asset_filenames": {},
+                "_acl": [
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser1_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "create": {},
+                            "mask": {
+                                "mask_ids": {
+                                    "248": [
+                                        "standard",
+                                        72
+                                    ]
+                                }
+                            },
+                            "write": {
+                                "_grantable": false
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    },
+                    {
+                        "who": {
+                            "_basetype": "user",
+                            "user": {
+                                "_id": {{ datastore `testuser3_id` }}
+                            }
+                        },
+                        "sticky": false,
+                        "active": true,
+                        "rights": {
+                            "create": {},
+                            "mask": {
+                                "mask_ids": {
+                                    "248": [
+                                        "standard",
+                                        72
+                                    ]
+                                }
+                            },
+                            "write": {
+                                "_grantable": false
+                            }
+                        },
+                        "tagfilter": {
+                            "any": [],
+                            "all": [],
+                            "not": []
+                        },
+                        "send_email_notification": null
+                    }
+                ],
+                "_private_transitions": false,
+                "_transitions": [],
+                "_private_tags": null,
+                "_tags": null,
+                "_maskfilters": {},
+                "_columnfilters": [],
+                "_filename_replacements": {}
+            }
+        ],
+        "endpoint": "objecttype",
+        "method": "POST"
+    },
+    "response": {
+        "statuscode": 200
+    }
+}

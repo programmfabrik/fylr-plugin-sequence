@@ -58,11 +58,43 @@
             "store": {
                 "user": "testuser2",
                 "expect_error": true,
+                "expect_statuscode": 403,
+                "expect_errorcode": "ObjectInsufficientRights",
             }
         }
 
         // single editor instance saves objects
         , "@setup/all.json"
         , "@testcases.json"
+
+        // Pool-based template config tests
+        // Uses the inventory objecttype and tests:
+        //   - pool custom_data → plugin fills inv_nr from sequence_plugin template
+        //   - inherited custom_data from parent pool → child pool uses parent's template
+        //     with its own pool values (%pool.shortname% resolves to child's shortname)
+        //   - testuser3 with limited pool rights → plugin error "not all pools were found"
+
+        // testuser1 with full pool rights
+        , {
+            "store": {
+                "user": "testuser1",
+                "expect_error": false,
+            }
+        }
+        , "@setup/all_with_pools.json"
+        , "@pool_testcases.json"
+
+        // error path: testuser3 with limited pool rights (no pool read right)
+        // the plugin's pool search returns nothing → "not all pools were found" → 400
+        , {
+            "store": {
+                "user": "testuser3",
+                "expect_error": true,
+                "expect_statuscode": 400,
+                "expect_errorcode": "fylr-plugin-sequence.error.not_all_pools_found",
+            }
+        }
+        , "@setup/all_with_pools.json"
+        , "@insert_inventory_pool_error.json"
     ]
 }

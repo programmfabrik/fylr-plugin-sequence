@@ -2,9 +2,13 @@
 
 import json
 import fylr_lib_plugin_python3.util as util
+import sequence
 
 
 def __search_pool_ids(api_url, access_token, pool_ids):
+    if not pool_ids:
+        return []
+
     response, statuscode = util.post_to_api(
         api_url,
         'search',
@@ -25,11 +29,24 @@ def __search_pool_ids(api_url, access_token, pool_ids):
                 'type': 'pool',
             }
         ),
-        log_in_tmp_file=False,
+        log_in_tmp_file=True,
     )
 
     if statuscode != 200:
-        raise Exception(response)
+        # parse the response, if it is an api error return it to fylr
+        hint = 'search pool ids'
+        util.return_if_api_error(response, hint)
+
+        # not an api error, some other response
+        util.return_error_response_with_parameters(
+            error_code=f'{sequence.PLUGIN_NAME}.error.unexpected_fylr_response',
+            error_msg=f'{hint}: unexpected response from fylr',
+            parameters={
+                'response': response,
+                'statuscode': statuscode,
+                'hint': hint,
+            },
+        )
 
     pools = util.get_json_value(json.loads(response), 'objects')
     if isinstance(pools, list):
@@ -38,14 +55,24 @@ def __search_pool_ids(api_url, access_token, pool_ids):
     return []
 
 
-def load_pool_data(api_url, access_token, pool_ids):
-    pools = __search_pool_ids(api_url, access_token, pool_ids)
-
-    parent_pools = set()
-    pool_paths = {}  # xxx needed?
+def load_pool_data(
+    api_url: str,
+    access_token: str,
+    pool_ids: str,
+) -> tuple[
+    dict,  # pool info
+    dict,  # inherited custom data
+    bool,  # all pools have been found?
+]:
     pool_info = {}
     inherited_custom_data = {}
 
+    # step 1: load all pools by given ids and collect their info, as well as all ids of parent pools
+
+    pool_paths = {}
+    parent_pool_ids = set()
+
+    pools = __search_pool_ids(api_url, access_token, pool_ids)
     for pool in pools:
 
         id = util.get_json_value(pool, 'pool._id')
@@ -75,15 +102,24 @@ def load_pool_data(api_url, access_token, pool_ids):
             if pool_id == id:
                 p_obj['custom_data'] = custom_data
             else:
-                parent_pools.add(pool_id)
+                parent_pool_ids.add(pool_id)
 
             pool_paths[id].append(p_obj)
 
-    pools = __search_pool_ids(api_url, access_token, parent_pools)
-    for pool in pools:
+    if len(pool_info) < len(pool_ids):
+        # not all pools for the ids were found
+        return pool_info, inherited_custom_data, False
+
+    # step 2: load all pools by the collect parent pool ids
+    # assume all pools were found
+    all_pools_found = True
+
+    parent_pools = __search_pool_ids(api_url, access_token, parent_pool_ids)
+    for pool in parent_pools:
 
         id = util.get_json_value(pool, 'pool._id')
         if not isinstance(id, int):
+            all_pools_found = False
             continue
 
         pool_info[id] = pool
@@ -158,4 +194,4 @@ def load_pool_data(api_url, access_token, pool_ids):
                     f'{field}:only_insert'
                 ] = only_insert
 
-    return pool_info, inherited_custom_data
+    return pool_info, inherited_custom_data, all_pools_found

@@ -10,10 +10,6 @@ import json
 import pool
 import templates
 
-
-PLUGIN_NAME = 'fylr-plugin-sequence'
-
-
 if __name__ == '__main__':
 
     orig_data = json.loads(sys.stdin.read())
@@ -26,19 +22,33 @@ if __name__ == '__main__':
         util.return_empty_objects()
 
     # get the server url
-    api_url = util.get_json_value(orig_data, 'info.api_url')
-    if api_url is None:
-        util.return_error_response('info.api_url missing!')
+    param = 'info.api_url'
+    api_url = util.get_json_value(orig_data, param)
+    if not api_url:
+        util.return_error_response_with_parameters(
+            error_code=f'{sequence.PLUGIN_NAME}.error.parameter_missing',
+            error_msg=f'the parameter {param} is missing in the given info.json',
+            parameters={
+                'parameter': param,
+            },
+        )
     api_url += '/api/v1'
 
     # get a session token
-    access_token = util.get_json_value(orig_data, 'info.api_user_access_token')
-    if access_token is None:
-        util.return_error_response('info.api_user_access_token missing!')
+    param = 'info.api_user_access_token'
+    access_token = util.get_json_value(orig_data, param)
+    if not access_token:
+        util.return_error_response_with_parameters(
+            error_code=f'{sequence.PLUGIN_NAME}.error.parameter_missing',
+            error_msg=f'the parameter {param} is missing in the given info.json',
+            parameters={
+                'parameter': param,
+            },
+        )
 
     # load base config for this plugin
     # directly return the original data if there are any configurations missing
-    plugin_config_path = f'info.config.plugin.{PLUGIN_NAME}.config'
+    plugin_config_path = f'info.config.plugin.{sequence.PLUGIN_NAME}.config'
 
     # load ordered list of database languages from the base config (api/v1/config/system)
     database_languages = []
@@ -50,9 +60,7 @@ if __name__ == '__main__':
     if isinstance(config_languages, list):
         for l in config_languages:
             v = util.get_json_value(l, 'value')
-            if v is None:
-                continue
-            if len(v) < 1:
+            if not v:
                 continue
             database_languages.append(v)
     if len(database_languages) < 1:
@@ -63,14 +71,14 @@ if __name__ == '__main__':
         orig_data,
         f'{plugin_config_path}.sequence.objecttype',
     )
-    if sequence_objecttype is None or len(sequence_objecttype) < 1:
+    if not sequence_objecttype:
         util.return_empty_objects()
 
     sequence_ref_field = util.get_json_value(
         orig_data,
         f'{plugin_config_path}.sequence.ref_field',
     )
-    if sequence_ref_field is None or len(sequence_ref_field) < 1:
+    if not sequence_ref_field:
         util.return_empty_objects()
 
     sequence_num_field = util.get_json_value(
@@ -78,7 +86,7 @@ if __name__ == '__main__':
         f'{plugin_config_path}.sequence.num_field',
     )
 
-    if sequence_num_field is None or len(sequence_num_field) < 1:
+    if not sequence_num_field:
         util.return_empty_objects()
 
     # objecttypes/fields settings
@@ -172,11 +180,19 @@ if __name__ == '__main__':
     pool_info = {}
     pool_customdata = {}
     if len(pool_ids) > 0:
-        pool_info, pool_customdata = pool.load_pool_data(
+        pool_info, pool_customdata, all_pools_found = pool.load_pool_data(
             api_url,
             access_token,
             pool_ids,
         )
+        if not all_pools_found:
+            util.return_error_response_with_parameters(
+                error_code=f'{sequence.PLUGIN_NAME}.error.not_all_pools_found',
+                error_msg=f'the search for pools did not return all expected pools. searched for {len(pool_ids)} ids from objects.',
+                parameters={
+                    'pool_ids_in_objects': len(pool_ids),
+                },
+            )
 
     templates_manager = templates.TemplatesManager(
         pool_info,
@@ -202,7 +218,7 @@ if __name__ == '__main__':
         # skip objects that are not configured in the base config and that are not in a pool
         objecttype = util.get_json_value(obj, '_objecttype')
         pool_id = util.get_json_value(obj, f'{objecttype}._pool.pool._id')
-        if objecttype not in objecttype_fields and pool_id is None:
+        if objecttype not in objecttype_fields and not pool_id:
             # another objecttype was inserted, nothing to do here
             continue
 
@@ -212,7 +228,7 @@ if __name__ == '__main__':
         # check if the fields need to be updated
         obj_changed = False
         column_templates = util.get_json_value(objecttype_fields, objecttype)
-        if column_templates is None:
+        if not column_templates:
             column_templates = {}
 
         for column in column_templates:
@@ -245,10 +261,10 @@ if __name__ == '__main__':
             # 3:    try to update the sequence object (protected by object version)
             # 4:    if the sequence was updated, update and return the objects, break loop
 
-            sequence_ref = f'{PLUGIN_NAME}:{objecttype}.{column}'
+            sequence_ref = f'{sequence.PLUGIN_NAME}:{objecttype}.{column}'
 
             obj_field_value = None
-            if obj_field is not None:
+            if obj_field:
                 if is_linked_field:
 
                     path_to_linked_field = obj_field.split('.')
@@ -271,7 +287,7 @@ if __name__ == '__main__':
                             f'{path_to_linked_field[0]}._system_object_id',
                         )
 
-                    if sys_id is not None:
+                    if sys_id:
                         if sys_id in linked_object_cache:
                             obj_field_value = linked_object_cache[sys_id]
                         else:
@@ -286,16 +302,16 @@ if __name__ == '__main__':
                     # value is not in a linked object, check if it is set in the object
                     obj_field_value = util.get_json_value(obj[objecttype], obj_field)
 
-            if obj_field_value is None:
+            if not obj_field_value:
                 # if the obj_field is set, but no value could be found,
                 # check if the value should be kept empty or the object should be skipped completly
-                if obj_field is not None:
+                if obj_field:
                     if no_sequence_if_empty_field:
                         continue
 
                     obj_field_value = 'N/A'
 
-            if obj_field_value is not None:
+            if obj_field_value:
                 sequence_ref += f':{obj_field}={obj_field_value}'
 
             seq = sequence.FylrSequence(
@@ -316,18 +332,7 @@ if __name__ == '__main__':
                 offset = seq.get_next_number()
 
                 # update the new sequence to check if it has not been changed by another instance
-                update_ok, error = seq.update(offset + 1)
-
-                if error is not None:
-                    # indicator that something went wrong and the plugin should just return an error message
-                    util.return_error_response(
-                        util.dumpjs(
-                            {
-                                'error': 'could not update sequence',
-                                'reason': error,
-                            }
-                        )
-                    )
+                update_ok = seq.update(offset + 1)
 
                 if not update_ok:
                     # sleep for 1 second and try again to get and update the sequence
@@ -341,7 +346,7 @@ if __name__ == '__main__':
                 # sequence was updated, unique sequence values can be used to update objects
                 try:
                     # replace `field` in template with object field value if it is included, else ignore
-                    if obj_field_value is not None and '%field%' in template:
+                    if obj_field_value and '%field%' in template:
                         template = template.replace('%field%', obj_field_value)
                     # perform a replacement of `%d` related formats in template with the new sequence value
                     new_value = template % (start_offset + offset)
@@ -391,7 +396,7 @@ if __name__ == '__main__':
                         field,
                         pool_id,
                     )
-                    if new_value is None:
+                    if not new_value:
                         continue
 
                     obj[objecttype][field] = new_value

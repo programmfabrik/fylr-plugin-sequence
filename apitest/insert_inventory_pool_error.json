@@ -1,0 +1,37 @@
+[
+    // testuser3 has object-create rights on inventory and sequence, but only an object-create
+    // right (no "read" right) on the parent pool.  When the plugin calls
+    // POST /api/v1/search?type=pool with testuser3's access token, the parent pool is not
+    // returned because testuser3 lacks pool read rights.
+    // pool.py: len(pool_info) < len(pool_ids) → returns all_pools_found=False
+    // main.py: returns error "not all pools were found"
+    // Expected: 400 from the plugin error handler
+    {
+        "name": "POST /api/v1/db/inventory as testuser3 (limited pool rights): plugin must return error",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_version": 1,
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `parent_pool_id` }}
+                            }
+                        },
+                        "title": "testuser3 pool error test"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST"
+        },
+        "response": {
+            "statuscode": {{ datastore `expect_statuscode` }},
+            "body": {
+                "code": {{ datastore `expect_errorcode` | marshal }}
+            }
+        }
+    }
+]

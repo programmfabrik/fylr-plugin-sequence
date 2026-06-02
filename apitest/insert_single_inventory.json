@@ -1,0 +1,82 @@
+[
+    // Insert 2 inventory objects into the parent pool one by one.
+    // The parent pool has sequence_plugin custom_data with template "INV-%pool.shortname%-%04d".
+    // Expected: inv_nr is filled by the plugin as "INV-parent-0001", "INV-parent-0002".
+    // The pool shortname "parent" is substituted by templates.py; %04d uses the sequence counter.
+    {
+        "name": "POST /api/v1/db/inventory into parent pool (#0): plugin fills inv_nr from pool custom_data template",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_version": 1,
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `parent_pool_id` }}
+                            }
+                        },
+                        "inv_nr": null,
+                        "title": "Test inventory item 1"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "inventory": {
+                        "inv_nr": "INV-parent-0001"
+                    }
+                }
+            ]
+        },
+        "store_response_gjson": {
+            "inventory_id_0": "body.0.inventory._id",
+            "inventory_version_0": "body.0.inventory._version"
+        }
+    },
+    {
+        "name": "POST /api/v1/db/inventory into parent pool (#1): sequence counter increments",
+        "request": {
+            "body": [
+                {
+                    "_mask": "inventory__all_fields",
+                    "_objecttype": "inventory",
+                    "inventory": {
+                        "_version": 1,
+                        "_pool": {
+                            "pool": {
+                                "_id": {{ datastore `parent_pool_id` }}
+                            }
+                        },
+                        "inv_nr": null,
+                        "title": "Test inventory item 2"
+                    }
+                }
+            ],
+            "endpoint": "db/inventory",
+            "method": "POST",
+            "query_params": {
+                "format": "long"
+            }
+        },
+        "response": {
+            "statuscode": 200,
+            "body": [
+                {
+                    "inventory": {
+                        "inv_nr": "INV-parent-0002"
+                    }
+                }
+            ]
+        }
+    }
+]
