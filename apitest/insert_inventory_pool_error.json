@@ -20,19 +20,18 @@
                                 "_id": {{ datastore `parent_pool_id` }}
                             }
                         },
-                        "inv_nr": null,
                         "title": "testuser3 pool error test"
                     }
                 }
             ],
             "endpoint": "db/inventory",
-            "method": "POST",
-            "query_params": {
-                "format": "long"
-            }
+            "method": "POST"
         },
         "response": {
-            "statuscode": 400
+            "statuscode": {{ datastore `expect_statuscode` }},
+            "body": {
+                "code": {{ datastore `expect_errorcode` | marshal }}
+            }
         }
     }
 ]

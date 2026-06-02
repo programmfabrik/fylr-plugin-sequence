@@ -21,7 +21,10 @@
             },
             "response": {
                 {{ if (datastore `expect_error`) }}
-                    "statuscode": 400
+                    "statuscode": {{ datastore `expect_statuscode` }},
+                    "body": {
+                        "code": {{ datastore `expect_errorcode` | marshal }}
+                    }
                 {{ else }}
                     "body": [
                         {

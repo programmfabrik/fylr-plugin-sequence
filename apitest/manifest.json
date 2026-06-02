@@ -58,6 +58,8 @@
             "store": {
                 "user": "testuser2",
                 "expect_error": true,
+                "expect_statuscode": 403,
+                "expect_errorcode": "ObjectInsufficientRights",
             }
         }
 
@@ -88,6 +90,8 @@
             "store": {
                 "user": "testuser3",
                 "expect_error": true,
+                "expect_statuscode": 400,
+                "expect_errorcode": "fylr-plugin-sequence.error.not_all_pools_found",
             }
         }
         , "@setup/all_with_pools.json"

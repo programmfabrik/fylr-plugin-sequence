@@ -533,3 +533,57 @@ sequence-plugin-pool.start_offset|text,Offset,Offset,Offset,Offset,Offset,Offset
 sequence-plugin-pool.objecttype|text,Objekttyp,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype,Objecttype
 sequence-plugin-pool.field|text,Zielfeld,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field,Target Field
 sequence-plugin-pool.only_insert|text,"Feld nur befüllen, wenn das Objekt neu angelegt wird",Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted,Only fill this field if a new object is inserted
+fylr-plugin-sequence.error.parameter_missing,Der Parameter `%(parameter)s` fehlt im übergebenen `info.json`,The parameter `%(parameter)s` is missing in the given `info.json`,,,,,,,,
+fylr-plugin-sequence.error.not_all_pools_found,Die Suche nach Pools hat nicht alle erwarteten Pools zurückgegeben. Es wurde nach %(pool_ids_in_objects)s IDs aus Objekten gesucht,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects,The search for pools did not return all expected pools. Searched for %(pool_ids_in_objects)s ids from objects
+fylr-plugin-sequence.error.unexpected_fylr_response,"Unerwartete Antwort von fylr. Hinweis aus dem Plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Antwort: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+","Unexpected response from fylr. Hint from plugin: ""%(hint)s"".
+
+Statuscode: %(statuscode)s
+
+Response: %(response)s
+"
+fylr-plugin-sequence.error.no_standard_mask_for_ot,Für den Objekttyp %(sequence_objecttype)s konnte keine Standardmaske gefunden werden,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s,Could not find standard mask for objecttype %(sequence_objecttype)s

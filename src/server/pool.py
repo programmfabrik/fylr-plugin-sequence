@@ -39,11 +39,12 @@ def __search_pool_ids(api_url, access_token, pool_ids):
 
         # not an api error, some other response
         util.return_error_response_with_parameters(
-            error_code=f'error.{sequence.PLUGIN_NAME}',
-            error_msg=f'{hint}: unexpected response',
+            error_code=f'{sequence.PLUGIN_NAME}.error.unexpected_fylr_response',
+            error_msg=f'{hint}: unexpected response from fylr',
             parameters={
                 'response': response,
                 'statuscode': statuscode,
+                'hint': hint,
             },
         )
 

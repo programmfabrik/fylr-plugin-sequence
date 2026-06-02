@@ -22,25 +22,27 @@ if __name__ == '__main__':
         util.return_empty_objects()
 
     # get the server url
-    api_url = util.get_json_value(orig_data, 'info.api_url')
+    param = 'info.api_url'
+    api_url = util.get_json_value(orig_data, param)
     if not api_url:
         util.return_error_response_with_parameters(
-            error_code=f'error.{sequence.PLUGIN_NAME}',
-            error_msg='required parameter missing in info json',
+            error_code=f'{sequence.PLUGIN_NAME}.error.parameter_missing',
+            error_msg=f'the parameter {param} is missing in the given info.json',
             parameters={
-                'parameter': 'info.api_url',
+                'parameter': param,
             },
         )
     api_url += '/api/v1'
 
     # get a session token
-    access_token = util.get_json_value(orig_data, 'info.api_user_access_token')
+    param = 'info.api_user_access_token'
+    access_token = util.get_json_value(orig_data, param)
     if not access_token:
         util.return_error_response_with_parameters(
-            error_code=f'error.{sequence.PLUGIN_NAME}',
-            error_msg='required parameter missing in info json',
+            error_code=f'{sequence.PLUGIN_NAME}.error.parameter_missing',
+            error_msg=f'the parameter {param} is missing in the given info.json',
             parameters={
-                'parameter': 'info.api_user_access_token',
+                'parameter': param,
             },
         )
 
@@ -185,8 +187,8 @@ if __name__ == '__main__':
         )
         if not all_pools_found:
             util.return_error_response_with_parameters(
-                error_code=f'error.{sequence.PLUGIN_NAME}',
-                error_msg='not all pools were found',
+                error_code=f'{sequence.PLUGIN_NAME}.error.not_all_pools_found',
+                error_msg=f'the search for pools did not return all expected pools. searched for {len(pool_ids)} ids from objects.',
                 parameters={
                     'pool_ids_in_objects': len(pool_ids),
                 },

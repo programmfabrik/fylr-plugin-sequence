@@ -138,11 +138,12 @@ class FylrSequence(object):
             util.return_if_api_error(api_resp, hint)
 
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
-                error_msg=f'{hint}: unexpected response',
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
                 parameters={
                     'response': api_resp,
                     'statuscode': statuscode,
+                    'hint': hint,
                 },
             )
 
@@ -153,10 +154,11 @@ class FylrSequence(object):
             objects = None
         if not isinstance(objects, list):
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
-                error_msg=f'{hint}: unexpected response: expected array',
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
                 parameters={
                     'response': api_resp,
+                    'hint': hint,
                 },
             )
 
@@ -208,6 +210,8 @@ class FylrSequence(object):
         return self.current_number
 
     def update(self, new_number: int) -> bool:
+        hint = 'update sequence'
+
         if new_number <= self.current_number:
             # no update, caller should repeat
             return False
@@ -241,13 +245,17 @@ class FylrSequence(object):
             return False
 
         else:
+            # check if it is another api error, if then return
+            util.return_if_api_error(resp, hint)
+
             # not an (expected) api error, some other response
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
-                error_msg=f'update sequence: unexpected response',
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
                 parameters={
                     'response': resp,
                     'statuscode': statuscode,
+                    'hint': hint,
                 },
             )
 
@@ -261,11 +269,12 @@ class FylrSequence(object):
 
             # not an api error, some other response
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
-                error_msg=f'{hint}: unexpected response',
+                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                error_msg=f'{hint}: unexpected response from fylr',
                 parameters={
                     'response': resp,
                     'statuscode': statuscode,
+                    'hint': hint,
                 },
             )
 
@@ -273,11 +282,12 @@ class FylrSequence(object):
         masks = util.get_json_value(content, 'masks')
         if not isinstance(masks, list):
             util.return_error_response_with_parameters(
-                error_code=f'error.{PLUGIN_NAME}',
-                error_msg=f'{hint}: unexpected response (expect "masks" as array)',
+                error_code=f'{PLUGIN_NAME}.error.no_standard_mask_for_ot',
+                error_msg=f'could not find standard mask for objecttype {self.sequence_objecttype})',
                 parameters={
                     'response': resp,
                     'statuscode': statuscode,
+                    'sequence_objecttype': self.sequence_objecttype,
                 },
             )
 
@@ -297,10 +307,11 @@ class FylrSequence(object):
             return mask_name
 
         util.return_error_response_with_parameters(
-            error_code=f'error.{PLUGIN_NAME}',
-            error_msg=f'{hint}: unexpected response (could not find standard mask for objecttype "{self.sequence_objecttype}")',
+            error_code=f'{PLUGIN_NAME}.error.no_standard_mask_for_ot',
+            error_msg=f'could not find standard mask for objecttype {self.sequence_objecttype})',
             parameters={
                 'response': resp,
                 'statuscode': statuscode,
+                'sequence_objecttype': self.sequence_objecttype,
             },
         )
