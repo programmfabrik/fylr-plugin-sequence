@@ -4,6 +4,21 @@ plugin:
   displayname:
     de-DE: "Sequence Plugin"
     en-US: "Sequence Plugin"
+  info:
+    de-DE: |
+      Füllt konfigurierte leere Felder in fylr-Datensätzen automatisch mit fortlaufenden Nummern. Geeignet zur Erzeugung laufender Kennungen, Inventarnummern oder ähnlicher Zähler beim Anlegen oder Aktualisieren von Datensätzen.
+
+      - Sequenzen je Objecttype und Feld, formatiert über printf-artige Vorlagen (z. B. `ID_%04d`)
+      - Getrennte Sequenzen je Feldwert, sodass die Nummerierung vom Objektinhalt abhängen kann
+      - Pool-basierte Nummerierung mit Platzhaltern für Poolname, Referenz und Hierarchie, vererbt an untergeordnete Pools
+      - Beschränkung auf neu angelegte Objekte sowie Offsets zur Auflösung von Kollisionen mit vorhandenen Werten
+    en-US: |
+      Automatically fills configured empty fields in fylr records with sequential numbers. Use it to generate running identifiers, inventory numbers, or similar counters as records are inserted or updated.
+
+      - Configure sequences per objecttype and field, formatted with printf-style templates (e.g. `ID_%04d`)
+      - Keep separate sequences per field value, so numbering can vary by object content
+      - Define pool-based numbering with placeholders for pool name, reference, and hierarchy, inherited by child pools
+      - Restrict filling to newly inserted objects, and use offsets to resolve collisions with existing values
   l10n: l10n/fylr-plugin-sequence.csv
   webfrontend:
     url: fylr-plugin-sequence.js
