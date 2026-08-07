@@ -1,56 +1,49 @@
+# Release workflow for this PUBLIC fylr plugin.
+#
+# A manager publishes a release on the
+# GitHub release page (tag vX.Y.Z); this builds the plugin zip and attaches it.
+# The asset URL — https://github.com/<org>/<repo>/releases/latest/download/<repo>.zip
+# — is what fylr installs from, so the release must be PUBLISHED, not draft
+# (a draft's assets are not reachable under releases/latest).
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  release:
+    types:
+      - published
+      - edited
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
         with:
-          submodules: recursive
+          node-version: 22
 
-      - name: Fix post run npm cleanup
-        run: mkdir -p /home/runner/.npm
-        continue-on-error: true
+      - name: Install CoffeeScript
+        run: sudo npm install -g coffeescript@1.12.7
 
-      - uses: actions/setup-node@v3
+      - name: Install golang
+        uses: actions/setup-go@v6
         with:
-          node-version: 14
-          cache: 'npm'
+          go-version: "1.26"
+          # a plugin repo has no go.mod for the dependency cache to key on
+          cache: false
 
-      - name: Install dependencies
-        run: |
-          sudo npm install -g coffeescript@1.12.7
+      - name: Build and package
+        run: make zip
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-        shell: bash
-
-      - name: Extract repository name
-        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Set zip file env name
-        run: echo "ZIP_NAME=${{env.REPOSITORY_NAME}}.zip" >> $GITHUB_ENV
-
-      - name: Build and Package
-        shell: bash
-        run: |
-          export RELEASE_TAG=${{ steps.get_version.outputs.VERSION }}
-          make zip
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Attach plugin zip to the release
+        uses: softprops/action-gh-release@v3
         with:
-          name: Release ${{ steps.get_version.outputs.VERSION }}
-          draft: true
-          generate_release_notes: true
+          # fylr-build-plugin names the zip after the plugin, not after the
+          # repository, and the two are not always the same. Attaching the
+          # glob keeps the workflow out of the naming rule.
           files: |
-            build/${{ env.ZIP_NAME }}
-            README.md
+            build/*.zip

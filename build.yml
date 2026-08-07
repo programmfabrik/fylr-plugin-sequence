@@ -1,0 +1,29 @@
+# Build configuration for fylr-build-plugin — the explicit build description.
+# Delivered files are listed here; "check" (runs with every build) warns when
+# a manifest reference is missing from the build folder.
+# All features: https://github.com/programmfabrik/fylr-build-plugin
+
+server:
+  install:
+    # the Python server extension, including the fylr-lib-plugin-python3
+    # submodule it vendors under server/fylr_lib_plugin_python3
+    - server
+    - l10n/fylr-plugin-sequence.csv
+
+webfrontend:
+  # CoffeeScript 1.x, compiled + concatenated in this order into
+  # plugin.webfrontend.url (webfrontend/fylr-plugin-sequence.js)
+  coffee1:
+    - webfrontend/SequencePluginBaseConfig.coffee
+    - webfrontend/SequencePluginPoolNode.coffee
+    - webfrontend/SequencePluginPool.coffee
+
+loca:
+  - csv: l10n/fylr-plugin-sequence.csv
+    sheet: 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
+    gid: "0"
+
+build:
+  # This plugin already published fylr-plugin-sequence.zip, which is what the
+  # naming rule produces anyway — so there is no historical name to keep.
+  zip_aliases: []

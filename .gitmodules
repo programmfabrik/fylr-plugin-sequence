@@ -1,3 +1,3 @@
 [submodule "src/server/fylr_lib_plugin_python3"]
-	path = src/server/fylr_lib_plugin_python3
+	path = server/fylr_lib_plugin_python3
 	url = git@github.com:programmfabrik/fylr-lib-plugin-python3.git

@@ -1,48 +1,50 @@
-PLUGIN_NAME = fylr-plugin-sequence
+# fylr plugins are built by fylr-build-plugin, the build driver that knows how
+# a fylr plugin is put together (compile, assemble build/, zip, seal, loca).
+# This Makefile is a thin shim for muscle memory — all logic lives in the
+# tool. @latest always resolves the tool's newest release, so plugins pick up
+# fixes without being touched; an incompatible tool change would come as a new
+# major version (import path .../v2), which is the only event that changes
+# this line.
+#
+# Tools needed (each only for the features this plugin uses):
+#   go       runs fylr-build-plugin — https://go.dev/dl/
+#   coffee   CoffeeScript 1.x:  npm install -g coffeescript@1.12.7
+#   sass     npm install -g sass
+APITEST ?= apitest
+FYLR_BUILD_PLUGIN ?= go run github.com/programmfabrik/fylr-build-plugin@latest
 
-# config for Google CSV spreadsheet
-L10N = l10n/fylr-plugin-sequence.csv
-GKEY = 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
-GID_LOCA = 0
-GOOGLE_URL = https://docs.google.com/spreadsheets/u/1/d/$(GKEY)/export?format=csv&gid=
-
-# config to build javascript
-JS = src/webfrontend/fylr-plugin-sequence.js
-COFFEE_FILES = src/webfrontend/SequencePluginBaseConfig.coffee \
-               src/webfrontend/SequencePluginPoolNode.coffee \
-			   src/webfrontend/SequencePluginPool.coffee
-
-BUILD_DIR = build
-BUILD_INFO = build-info.json
-ZIP_NAME ?= "${PLUGIN_NAME}.zip"
+# The tool itself reads NO environment variables — everything is passed as
+# flags. The release workflow's RELEASE_TAG env is translated into a flag
+# right here. The zip's NAME is not passed: fylr-build-plugin always names it
+# <repo>.zip, which is the naming rule for every fylr plugin release.
+RELEASE_FLAGS = $(if $(RELEASE_TAG),-release "$(RELEASE_TAG)")
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-google-csv: ## get loca CSV from google
-	curl --silent -L -o - "$(GOOGLE_URL)$(GID_LOCA)" | tr -d "\r" > $(L10N)
-
 all: build ## build all
 
-build: clean code buildinfojson ## build all (creates build folder)
-	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)
-	cp manifest.master.yml $(BUILD_DIR)/$(PLUGIN_NAME)/manifest.yml
-	cp -r src/server l10n $(BUILD_INFO) $(BUILD_DIR)/$(PLUGIN_NAME)
-	mkdir -p $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
-	cp -r $(JS) $(BUILD_DIR)/$(PLUGIN_NAME)/webfrontend
+build: ## build the plugin into build/<name>/ — loadable by fylr via plugin.paths
+	$(FYLR_BUILD_PLUGIN) build $(RELEASE_FLAGS)
 
-code: $(JS) ## build Coffeescript code
+zip: ## build the release zip
+	$(FYLR_BUILD_PLUGIN) zip $(RELEASE_FLAGS)
+
+seal: ## build + seal the release zip (fylr dev/CI key unless -pubkey is passed to the tool)
+	$(FYLR_BUILD_PLUGIN) seal $(RELEASE_FLAGS)
+
+loca: ## pull the loca CSV from its Google Sheets master (build.yml)
+	$(FYLR_BUILD_PLUGIN) loca
+
+check: ## validate the build tree against the manifest
+	$(FYLR_BUILD_PLUGIN) check
 
 clean: ## clean build files
-	rm -f src/server/*.pyc
-	rm -rf src/server/__pycache__/
-	rm -f src/server/fylr_lib_plugin_python3/*.pyc
-	rm -rf src/server/fylr_lib_plugin_python3/__pycache__/
-	rm -f src/webfrontend/*.coffee.js
-	rm -f $(JS)
-	rm -f $(BUILD_INFO)
-	rm -rf $(BUILD_DIR)
+	$(FYLR_BUILD_PLUGIN) clean
 
+.PHONY: help all build zip seal loca check clean
+
+# kept from the previous Makefile: this plugin has apitests
 apitest-dep:
 	go install github.com/programmfabrik/apitest@latest
 
@@ -54,27 +56,3 @@ apitest: apitest-dep ## run apitest
 	# export APITEST_PARAMS="--server http://root:admin@localhost:8080/api/v1"
 
 	echo "-d apitest" | xargs $(APITEST) $(APITEST_PARAMS)
-
-zip: build ## build zip file for publishing
-	cd $(BUILD_DIR) && zip ${ZIP_NAME} -r $(PLUGIN_NAME) -x *.git*
-
-${JS}: $(subst .coffee,.coffee.js,${COFFEE_FILES})
-	mkdir -p $(dir $@)
-	cat $^ > $@
-
-%.coffee.js: %.coffee
-	coffee -b -p --compile "$^" > "$@" || ( rm -f "$@" ; false )
-
-buildinfojson:
-	repo=`git remote get-url origin | sed -e 's/\.git$$//' -e 's#.*[/\\]##'` ;\
-	rev=`git show --no-patch --format=%H` ;\
-	lastchanged=`git show --no-patch --format=%ad --date=format:%Y-%m-%dT%T%z` ;\
-	builddate=`date +"%Y-%m-%dT%T%z"` ;\
-	release=$(if $(strip $(RELEASE_TAG)),'"$(RELEASE_TAG)"','null') ;\
-	echo '{' > $(BUILD_INFO) ;\
-	echo '  "repository": "'$$repo'",' >> $(BUILD_INFO) ;\
-	echo '  "rev": "'$$rev'",' >> $(BUILD_INFO) ;\
-	echo '  "release": '$$release',' >> $(BUILD_INFO) ;\
-	echo '  "lastchanged": "'$$lastchanged'",' >> $(BUILD_INFO) ;\
-	echo '  "builddate": "'$$builddate'"' >> $(BUILD_INFO) ;\
-	echo '}' >> $(BUILD_INFO)
