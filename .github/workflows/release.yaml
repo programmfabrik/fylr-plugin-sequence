@@ -19,6 +19,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          # server/fylr_lib_plugin_python3 is a submodule and is delivered
+          # inside the plugin; without this the release ships a server/ tree
+          # whose library is simply absent, and nothing fails at build time
+          submodules: true
 
       - uses: actions/setup-node@v6
         with:
