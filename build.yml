@@ -11,19 +11,20 @@ server:
     - l10n/fylr-plugin-sequence.csv
 
 webfrontend:
-  # CoffeeScript 1.x, compiled + concatenated in this order into
-  # plugin.webfrontend.url (webfrontend/fylr-plugin-sequence.js)
-  coffee1:
-    - webfrontend/SequencePluginBaseConfig.coffee
-    - webfrontend/SequencePluginPoolNode.coffee
-    - webfrontend/SequencePluginPool.coffee
+  # assembled into plugin.webfrontend.url, in this order:
+  # .coffee is compiled (CoffeeScript 1.x), .scss compiled,
+  # anything else taken verbatim
+  bundles:
+    - sources:
+        - webfrontend/SequencePluginBaseConfig.coffee
+        - webfrontend/SequencePluginPoolNode.coffee
+        - webfrontend/SequencePluginPool.coffee
 
 loca:
   - csv: l10n/fylr-plugin-sequence.csv
     sheet: 1xHXOhEdya6h2zX0Gw6Dm_J5UUWtsgLPCeeTkBui3IZ0
     gid: "0"
 
-build:
-  # This plugin already published fylr-plugin-sequence.zip, which is what the
-  # naming rule produces anyway — so there is no historical name to keep.
-  zip_aliases: []
+# This plugin already published fylr-plugin-sequence.zip, which is what the
+# naming rule produces anyway — so there is no historical name to keep.
+zip_aliases: []
