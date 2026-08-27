@@ -6,6 +6,13 @@ import time
 
 PLUGIN_NAME = 'fylr-plugin-sequence'
 
+# rows per request when scanning for the sequence object. `db/<ot>/<mask>/list`
+# answers at most 1000 rows, so the scan must page: on an instance whose
+# sequence objecttype holds more rows than one page, the plugin would otherwise
+# never see its own sequence, restart it at 1 and collide with the unique key on
+# the reference field on every save (#78720)
+LIST_PAGE_SIZE = 1000
+
 
 def get_next_offset(
     api_url,
@@ -59,7 +66,10 @@ def get_next_offset(
             repeated += 1
 
             if repeated >= max_repeat:
-                break
+                # repeating does not help, return the reason to the user
+                seq.fail_with_last_error(
+                    f'sequence "{sequence_ref}": update failed', repeated
+                )
 
             do_repeat = True
             continue
@@ -91,6 +101,13 @@ class FylrSequence(object):
         self.current_number = 1
         self.version = 1
         self.obj_id = None
+
+        # response of the last update that fylr rejected. The retry loops hand
+        # it back when they give up, so a permanent problem (a missing right, a
+        # unique key violation on the reference, ...) becomes visible instead of
+        # being repeated until the server kills the callback (#78720)
+        self.last_error_response = None
+        self.last_error_statuscode = 0
 
         self.sequence_objecttype = sequence_objecttype
 
@@ -128,80 +145,94 @@ class FylrSequence(object):
         return resp, statuscode
 
     def get_next_number(self) -> int:
-        path = f'db/{self.sequence_objecttype}/{self.mask}/list'
-        api_resp, statuscode = self.get_from_api(path)
-
         hint = 'sequence: get next number'
 
-        if statuscode != 200:
-            # if it is an api error return it to fylr
-            util.return_if_api_error(api_resp, hint)
-
-            util.return_error_response_with_parameters(
-                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
-                error_msg=f'{hint}: unexpected response from fylr',
-                parameters={
-                    'response': api_resp,
-                    'statuscode': statuscode,
-                    'hint': hint,
-                },
-            )
-
-        objects = []
-        try:
-            objects = json.loads(api_resp)
-        except:
-            objects = None
-        if not isinstance(objects, list):
-            util.return_error_response_with_parameters(
-                error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
-                error_msg=f'{hint}: unexpected response from fylr',
-                parameters={
-                    'response': api_resp,
-                    'hint': hint,
-                },
-            )
-
         sequence_exists = False
-        for obj in objects:
+        offset = 0
 
-            # ignore all sequence objects that have been deleted
-            # CAUTION: deleting sequence objects can cause unique constraint violations if old numbers of the sequence are reused
-            if '_latest_version_deleted_at' in obj:
-                continue
+        while True:
+            api_resp, statuscode = self.get_from_api(
+                f'db/{self.sequence_objecttype}/{self.mask}/list'
+                f'?limit={LIST_PAGE_SIZE}&offset={offset}'
+            )
 
-            # ignore all sequence objects that have a different reference
-            if (
-                util.get_json_value(
-                    obj,
-                    f'{self.sequence_objecttype}.{self.sequence_ref_field}',
+            if statuscode != 200:
+                # if it is an api error return it to fylr
+                util.return_if_api_error(api_resp, hint)
+
+                util.return_error_response_with_parameters(
+                    error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                    error_msg=f'{hint}: unexpected response from fylr',
+                    parameters={
+                        'response': api_resp,
+                        'statuscode': statuscode,
+                        'hint': hint,
+                    },
                 )
-                != self.ref
-            ):
-                continue
 
-            sequence_exists = True
+            objects = []
+            try:
+                objects = json.loads(api_resp)
+            except:
+                objects = None
+            if not isinstance(objects, list):
+                util.return_error_response_with_parameters(
+                    error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+                    error_msg=f'{hint}: unexpected response from fylr',
+                    parameters={
+                        'response': api_resp,
+                        'hint': hint,
+                    },
+                )
 
-            # get the last used number of the sequence
-            n = util.get_json_value(
-                obj,
-                f'{self.sequence_objecttype}.{self.sequence_num_field}',
-            )
-            if not n:
-                n = 1
+            for obj in objects:
 
-            # update offset, object id and version
-            self.current_number = n
-            self.obj_id = util.get_json_value(
-                obj,
-                f'{self.sequence_objecttype}._id',
-            )
-            self.version = util.get_json_value(
-                obj,
-                f'{self.sequence_objecttype}._version',
-            )
+                # ignore all sequence objects that have been deleted
+                # CAUTION: deleting sequence objects can cause unique constraint violations if old numbers of the sequence are reused
+                if '_latest_version_deleted_at' in obj:
+                    continue
 
-            break
+                # ignore all sequence objects that have a different reference
+                if (
+                    util.get_json_value(
+                        obj,
+                        f'{self.sequence_objecttype}.{self.sequence_ref_field}',
+                    )
+                    != self.ref
+                ):
+                    continue
+
+                sequence_exists = True
+
+                # get the last used number of the sequence
+                n = util.get_json_value(
+                    obj,
+                    f'{self.sequence_objecttype}.{self.sequence_num_field}',
+                )
+                if not n:
+                    n = 1
+
+                # update offset, object id and version
+                self.current_number = n
+                self.obj_id = util.get_json_value(
+                    obj,
+                    f'{self.sequence_objecttype}._id',
+                )
+                self.version = util.get_json_value(
+                    obj,
+                    f'{self.sequence_objecttype}._version',
+                )
+
+                break
+
+            if sequence_exists:
+                break
+
+            if len(objects) < LIST_PAGE_SIZE:
+                # last page: this sequence does not exist yet
+                break
+
+            offset += LIST_PAGE_SIZE
 
         if not sequence_exists:
             self.current_number = 1
@@ -211,6 +242,9 @@ class FylrSequence(object):
 
     def update(self, new_number: int) -> bool:
         hint = 'update sequence'
+
+        self.last_error_response = None
+        self.last_error_statuscode = 0
 
         if new_number <= self.current_number:
             # no update, caller should repeat
@@ -241,7 +275,10 @@ class FylrSequence(object):
 
         elif statuscode == 400:
             # some api error, maybe wrong version
-            # => caller should repeat the process, and get the new current sequence number
+            # => caller should repeat the process, and get the new current sequence number.
+            # keep the response: when repeating does not help, the caller returns it
+            self.last_error_response = resp
+            self.last_error_statuscode = statuscode
             return False
 
         else:
@@ -258,6 +295,28 @@ class FylrSequence(object):
                     'hint': hint,
                 },
             )
+
+    def fail_with_last_error(self, hint: str, attempts: int):
+        # called when a caller has used up its repeats: return the response of
+        # the last rejected update, so the actual reason reaches the user.
+        # Without this the callers repeat forever and the save request only ends
+        # when fylr kills the plugin callback (#78720)
+        if self.last_error_response is not None:
+            # a fylr api error (missing right, unique key violation, ...) is
+            # passed through as it is
+            util.return_if_api_error(self.last_error_response, hint)
+
+        util.return_error_response_with_parameters(
+            error_code=f'{PLUGIN_NAME}.error.unexpected_fylr_response',
+            error_msg=f'{hint}: sequence "{self.ref}" could not be updated in {attempts} attempts',
+            parameters={
+                'response': self.last_error_response,
+                'statuscode': self.last_error_statuscode,
+                'sequence': self.ref,
+                'attempts': attempts,
+                'hint': hint,
+            },
+        )
 
     def get_sequence_objecttype_mask(self):
         resp, statuscode = self.get_from_api('mask/CURRENT')

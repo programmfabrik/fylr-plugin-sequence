@@ -170,6 +170,18 @@ If fields are empty after saving, check the configuration and make sure that the
 
 If the sequence can not be updated, the saving of the object in the editor will fail. The plugin will display an error message in the frontend. The most common errors will mention missing rights (with a http error code of 403), in which case the rights management needs to be checked and updated. All api errors which come from fylr as a response to a request (e.g. a failed update) will be passed through as they are.
 
+#### The sequence object can not be found by the plugin
+
+If the user is allowed to *create* objects of the sequence objecttype but not to *read* them, the plugin does not see the existing sequence object. It then assumes that the sequence does not exist yet and tries to insert a second sequence object with the same reference, which fylr rejects with a `UniqueKeyViolation` on the reference field:
+
+```
+The value "fylr-plugin-sequence:cs_image.name" in field "reference" already exists.
+```
+
+The same happens if the sequence object is hidden from the user in any other way, for example by a tagfilter. Give the user (or the group) *read* and *write* rights on the sequence objecttype, not only *create*.
+
+Note that the plugin repeats a failed sequence update three times before it returns the error, so such a save takes a few seconds before it fails.
+
 Other error responses will give information about internal errors in the plugin. In any case, the complete error will be displayed with all available information. The following errors are thrown by the plugin itself:
 
 * `fylr-plugin-sequence.error.not_all_pools_found`

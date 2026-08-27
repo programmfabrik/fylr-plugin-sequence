@@ -326,6 +326,7 @@ if __name__ == '__main__':
 
             do_repeat = True
             repeated = 0
+            max_repeat = 3
             while do_repeat:
                 do_repeat = False
 
@@ -338,8 +339,20 @@ if __name__ == '__main__':
                     # sleep for 1 second and try again to get and update the sequence
                     time.sleep(1)
 
-                    do_repeat = True
                     repeated += 1
+
+                    if repeated >= max_repeat:
+                        # the update keeps being rejected for the same reason (a
+                        # missing right, a unique key violation on the reference,
+                        # ...): return that reason. Without the cap the plugin
+                        # repeats once a second and the save request only ends
+                        # when fylr kills the callback, which looks like a frozen
+                        # save to the user (#78720)
+                        seq.fail_with_last_error(
+                            f'sequence "{sequence_ref}": update failed', repeated
+                        )
+
+                    do_repeat = True
 
                     continue
 
