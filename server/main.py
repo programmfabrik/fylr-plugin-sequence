@@ -2,7 +2,6 @@
 
 
 import sys
-import time
 import fylr_lib_plugin_python3.util as util
 import sequence
 import search
@@ -324,44 +323,31 @@ if __name__ == '__main__':
                 log_in_tmp_file=False,
             )
 
-            do_repeat = True
-            repeated = 0
-            while do_repeat:
-                do_repeat = False
+            # get a number of the sequence and reserve it for this object. A
+            # rejected update is repeated only while another save is competing
+            # for the same sequence, else the reason is returned right away
+            # (#78720)
+            offset = seq.next_offset()
 
-                offset = seq.get_next_number()
-
-                # update the new sequence to check if it has not been changed by another instance
-                update_ok = seq.update(offset + 1)
-
-                if not update_ok:
-                    # sleep for 1 second and try again to get and update the sequence
-                    time.sleep(1)
-
-                    do_repeat = True
-                    repeated += 1
-
-                    continue
-
-                # sequence was updated, unique sequence values can be used to update objects
-                try:
-                    # replace `field` in template with object field value if it is included, else ignore
-                    if obj_field_value and '%field%' in template:
-                        template = template.replace('%field%', obj_field_value)
-                    # perform a replacement of `%d` related formats in template with the new sequence value
-                    new_value = template % (start_offset + offset)
-                except TypeError as e:
-                    util.return_error_response(
-                        util.dumpjs(
-                            {
-                                f'error': f'template "{template}" is invalid to format a sequential string',
-                                'reason': str(e),
-                            }
-                        )
+            # sequence was updated, unique sequence values can be used to update objects
+            try:
+                # replace `field` in template with object field value if it is included, else ignore
+                if obj_field_value and '%field%' in template:
+                    template = template.replace('%field%', obj_field_value)
+                # perform a replacement of `%d` related formats in template with the new sequence value
+                new_value = template % (start_offset + offset)
+            except TypeError as e:
+                util.return_error_response(
+                    util.dumpjs(
+                        {
+                            f'error': f'template "{template}" is invalid to format a sequential string',
+                            'reason': str(e),
+                        }
                     )
+                )
 
-                obj[objecttype][column] = new_value
-                obj_changed = True
+            obj[objecttype][column] = new_value
+            obj_changed = True
 
         # check if the object is in a pool and if this pool has (inherited) custom data template settings
         if pool_id in pool_customdata:
