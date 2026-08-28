@@ -180,7 +180,13 @@ The value "fylr-plugin-sequence:cs_image.name" in field "reference" already exis
 
 The same happens if the sequence object is hidden from the user in any other way, for example by a tagfilter. Give the user (or the group) *read* and *write* rights on the sequence objecttype, not only *create*.
 
-Note that the plugin repeats a failed sequence update three times before it returns the error, so such a save takes a few seconds before it fails.
+Two saves that create the same sequence at the same moment are rejected with the very same error, so the plugin reads the sequence once more before it gives up: if the sequence object is visible now, it was the other save and the number is taken from it; if it is still not visible, the rights are the reason and the error is returned. Such a save fails after well under a second.
+
+#### Several editors save at the same moment
+
+All saves that use one sequence have to update the same sequence object, one after the other. The plugin reads the sequence, writes the next number and, if another save was faster, reads and writes it again. fylr rejects the update of the loser with a `VersionMismatch`, with a `UniqueKeyViolation` on `object_u1` (the unique key of the object table over the object id and its version), or - while the sequence is being created - with the `UniqueKeyViolation` on the reference field described above.
+
+Up to ten attempts are made, with a growing pause of up to two seconds between them, so a save waits at most about 14 seconds for a contended sequence before it fails with the rejection of the last attempt. Sequences are only contended per reference: two objecttypes, or two field values of a sequence that is split by a field, never wait for each other.
 
 Other error responses will give information about internal errors in the plugin. In any case, the complete error will be displayed with all available information. The following errors are thrown by the plugin itself:
 
