@@ -1,28 +1,24 @@
 [
     {
-        "name": "PUT /api/v1/plugin/manage",
+        "name": "PUT /api/v1/plugin/manage/upload",
         "request": {
-            "body": {
-                "type": "zip",
-                "url": "",
-                "zip_file": {
-                    "_id": {{ datastore `plugin_zip_id` }},
-                    "preferred": true
-                }
-            },
-            "endpoint": "plugin/manage",
-            "method": "PUT"
+            "endpoint": "plugin/manage/upload",
+            "method": "PUT",
+            "body_file": "@../../build/fylr-plugin-sequence.zip",
+            "body_type": "file",
+            "query_params": {
+                "filename": "fylr-plugin-sequence.zip"
+            }
         },
         "response": {
+            "statuscode": 200,
             "body": {
                 "id:control": {
                     "is_number": true
                 },
-                "zip_file": {
-                    "_id": {{ datastore `plugin_zip_id` }}
-                }
-            },
-            "statuscode": 200
+                "name": "fylr-plugin-sequence",
+                "type": "zip"
+            }
         },
         "store_response_gjson": {
             "plugin_id": "body.id"
