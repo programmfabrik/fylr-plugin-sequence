@@ -89,9 +89,9 @@ class ez5.SequencePluginPool extends ez5.PoolPlugin
 		if not @__canSave()
 			throw new InvalidSaveDataException()
 
-		_data = CUI.util.copyObject(@data, true)
-		save_data.pool.custom_data =
-			sequence_plugin : _data
+		# Only touch our own key, the rest of custom_data belongs to core and other plugins
+		save_data.pool.custom_data ?= {}
+		save_data.pool.custom_data.sequence_plugin = CUI.util.copyObject(@data, true)
 		return save_data
 
 	# Return false if any of the sequence has an empty property.
