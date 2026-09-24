@@ -28,9 +28,17 @@ The objecttype must have a single simple mask which allows reading and editing o
 
 ### Rights management
 
-The plugin uses the fylr API to update the sequence and the saved objects. To authenticate the necessary requests, the plugin uses the same user session as the user which is currently logged in.
+The plugin uses the fylr API to update the sequence and the saved objects. To authenticate the necessary requests, the plugin uses the same user session as the user which is currently logged in. This means that the user (or group in which the user is) needs the necessary *read* and *write* rights on the special sequence objecttype and on the mask. Missing rights will cause the plugin to fail.
 
-This means that the user (or group in which the user is) needs the necessary *read* and *write* rights on the special sequence objecttype and on the mask. Missing rights will cause the plugin to fail.
+**Important:** every user/group who can create/edit any objecttype which is configured in the sequence plugin to have a sequence, *needs at least* the following rights on the sequence objecttype. These have to be given to the user/group either in the objecttype manager or in the pool manager:
+
+* **View & Edit Records**
+    * existing sequence objects must be updated
+* **Create Records**
+    * if the sequence does not exist yet, a new object must be created
+* **Allowed Masks**
+    * *at least one* mask must be enabled
+    * preferrably the standard mask of the objecttype
 
 ## Setup
 
