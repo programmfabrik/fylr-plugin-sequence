@@ -16,8 +16,14 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
         filterNumberField = (field) =>
             return field instanceof NumberColumn and
+                not field.isSystemField() and
                 not field.isTopLevelField() and
                 not field.insideNested()
+
+        # only plain "number" columns: subclasses are _id, links, integer.2 and double
+        filterIntegerField = (field) =>
+            return field.constructor is NumberColumn and
+                filterNumberField(field)
 
         filterObjectField = (field, data, parentField) =>
             return filterTextField(field) or
@@ -51,8 +57,8 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
                         objecttype.addMask(mask)
 
-                        hasRefField = objecttype.getFields().some((field) -> field instanceof TextColumn)
-                        hasNumField = objecttype.getFields().some((field) -> field instanceof NumberColumn)
+                        hasRefField = objecttype.getFields().some(filterTextField)
+                        hasNumField = objecttype.getFields().some(filterIntegerField)
 
                         return hasRefField and hasNumField
 
@@ -72,7 +78,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
                     objecttype_data_key: "objecttype"
                     store_value: "fullname"
                     show_name: true
-                    filter: filterNumberField
+                    filter: filterIntegerField
 
             when "update_objecttype"
                 field = new ez5.ObjecttypeSelector
@@ -87,9 +93,7 @@ class SequencePluginBaseConfig extends BaseConfigPlugin
 
                         objecttype.addMask(mask)
 
-                        hasTextField = objecttype.getFields().some((field) -> field instanceof TextColumn)
-
-                        return hasTextField
+                        return objecttype.getFields().some(filterTextField)
 
             when "update_column"
                 field = new ez5.FieldSelector
